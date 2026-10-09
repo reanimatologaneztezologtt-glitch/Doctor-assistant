@@ -1,0 +1,10 @@
+{
+  "note": "Adapters live in server/payments/providers/. All are stubs; not called while paymentsEnabled is false. Legal, tax and invoicing review is required per jurisdiction before enabling.",
+  "providers": [
+    { "id": "click",     "name": "Click",          "adapter": "click.mjs",     "region": "UZ",            "currencies": ["UZS"] },
+    { "id": "payme",     "name": "Payme",          "adapter": "payme.mjs",     "region": "UZ",            "currencies": ["UZS"] },
+    { "id": "uzum",      "name": "Uzum Bank",      "adapter": "uzum.mjs",      "region": "UZ",            "currencies": ["UZS"] },
+    { "id": "intl_card", "name": "International card", "adapter": "intl-card.mjs", "region": "INTL",   "currencies": ["USD", "EUR"] },
+    { "id": "paypal",    "name": "PayPal",         "adapter": "paypal.mjs",    "region": "INTL",          "currencies": ["USD", "EUR"] }
+  ]
+}

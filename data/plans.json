@@ -1,0 +1,11 @@
+{
+  "currency": "UZS",
+  "note": "Test mode: prices are 0. Limits are enforced on the server only.",
+  "plans": [
+    { "id": "free",    "period": null,      "price": 0, "dailyRequests": 20,  "maxTokens": 4000, "status": "active" },
+    { "id": "daily",   "period": "daily",   "price": 0, "dailyRequests": 100, "maxTokens": 8000, "status": "active" },
+    { "id": "weekly",  "period": "weekly",  "price": 0, "dailyRequests": 100, "maxTokens": 8000, "status": "active" },
+    { "id": "monthly", "period": "monthly", "price": 0, "dailyRequests": 100, "maxTokens": 8000, "status": "active" },
+    { "id": "yearly",  "period": "yearly",  "price": 0, "dailyRequests": 100, "maxTokens": 8000, "status": "paused" }
+  ]
+}

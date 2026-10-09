@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" class="dg">
+  <!-- Schematic parasternal short-axis at the great vessels. -->
+  <path class="dg-sector" d="M160 8 L20 190 A180 180 0 0 0 300 190 Z"/>
+  <circle class="dg-art" cx="140" cy="120" r="34"/>
+  <path class="dg-ven" d="M180 70 C230 70 250 110 240 160 L214 160 C220 120 210 96 180 96 Z"/>
+  <line class="dg-measure" x1="214" y1="140" x2="240" y2="140"/>
+  <text class="dg-label" x="130" y="124">Ao</text>
+  <text class="dg-label" x="246" y="140">PA</text>
+</svg>

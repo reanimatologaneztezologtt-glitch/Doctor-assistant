@@ -1,0 +1,606 @@
+{
+  "note": "Reference values for adults. Sex codes: 1 = male, 2 = female. Every norm cites its source id from data/sources.json.",
+  "sections": [
+    {
+      "id": "general",
+      "parameters": [
+        {
+          "id": "sex",
+          "type": "select",
+          "options": [
+            1,
+            2
+          ],
+          "unit": null,
+          "sourceId": "ase2015",
+          "diagram": null
+        },
+        {
+          "id": "height",
+          "unit": "cm_body",
+          "min": 50,
+          "max": 250,
+          "sourceId": "mosteller1987",
+          "diagram": null
+        },
+        {
+          "id": "weight",
+          "unit": "kg",
+          "min": 2,
+          "max": 300,
+          "sourceId": "mosteller1987",
+          "diagram": null
+        },
+        {
+          "id": "bsa",
+          "unit": "m2",
+          "derive": "sqrt(height*weight/3600)",
+          "decimals": 2,
+          "sourceId": "mosteller1987",
+          "diagram": null
+        }
+      ]
+    },
+    {
+      "id": "chambers",
+      "parameters": [
+        {
+          "id": "lvedd",
+          "unit": "mm",
+          "min": 20,
+          "max": 100,
+          "decimals": 1,
+          "sourceId": "ase2015",
+          "diagram": "plax",
+          "calculator": "ef-teichholz",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvedd_low_m",
+              "high": "lvedd_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvedd_low_f",
+              "high": "lvedd_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvesd",
+          "unit": "mm",
+          "min": 10,
+          "max": 90,
+          "decimals": 1,
+          "sourceId": "ase2015",
+          "diagram": "plax",
+          "calculator": "ef-teichholz",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvesd_low_m",
+              "high": "lvesd_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvesd_low_f",
+              "high": "lvesd_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvedv",
+          "unit": "ml",
+          "min": 10,
+          "max": 600,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "calculator": "ef-simpson",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvedv_low_m",
+              "high": "lvedv_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvedv_low_f",
+              "high": "lvedv_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvesv",
+          "unit": "ml",
+          "min": 5,
+          "max": 500,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "calculator": "ef-simpson",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvesv_low_m",
+              "high": "lvesv_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvesv_low_f",
+              "high": "lvesv_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvedvi",
+          "unit": "mlm2",
+          "derive": "lvedv/bsa",
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvedvi_low_m",
+              "high": "lvedvi_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvedvi_low_f",
+              "high": "lvedvi_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvesvi",
+          "unit": "mlm2",
+          "derive": "lvesv/bsa",
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvesvi_low_m",
+              "high": "lvesvi_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvesvi_low_f",
+              "high": "lvesvi_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvef",
+          "unit": "pct",
+          "min": 5,
+          "max": 90,
+          "decimals": 0,
+          "derive": "(lvedv-lvesv)/lvedv*100",
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "calculator": "ef-simpson",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvef_low_m",
+              "high": "lvef_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvef_low_f",
+              "high": "lvef_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lav",
+          "unit": "ml",
+          "min": 5,
+          "max": 400,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c"
+        },
+        {
+          "id": "lavi",
+          "unit": "mlm2",
+          "derive": "lav/bsa",
+          "min": 5,
+          "max": 200,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "norms": [
+            {
+              "high": "lavi_high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "walls",
+      "parameters": [
+        {
+          "id": "ivsd",
+          "unit": "mm",
+          "min": 3,
+          "max": 40,
+          "decimals": 1,
+          "sourceId": "ase2015",
+          "diagram": "plax",
+          "calculator": "lvmass-rwt",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "ivsd_low_m",
+              "high": "ivsd_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "ivsd_low_f",
+              "high": "ivsd_high_f"
+            }
+          ]
+        },
+        {
+          "id": "pwd",
+          "unit": "mm",
+          "min": 3,
+          "max": 40,
+          "decimals": 1,
+          "sourceId": "ase2015",
+          "diagram": "plax",
+          "calculator": "lvmass-rwt",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "pwd_low_m",
+              "high": "pwd_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "pwd_low_f",
+              "high": "pwd_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvmass",
+          "unit": "g",
+          "derive": "0.8*1.04*(((ivsd+lvedd+pwd)/10)^3-(lvedd/10)^3)+0.6",
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "plax",
+          "calculator": "lvmass-rwt",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvmass_low_m",
+              "high": "lvmass_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvmass_low_f",
+              "high": "lvmass_high_f"
+            }
+          ]
+        },
+        {
+          "id": "lvmi",
+          "unit": "gm2",
+          "derive": "lvmass/bsa",
+          "min": 20,
+          "max": 400,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "plax",
+          "calculator": "lvmass-rwt",
+          "norms": [
+            {
+              "sex": 1,
+              "low": "lvmi_low_m",
+              "high": "lvmi_high_m"
+            },
+            {
+              "sex": 2,
+              "low": "lvmi_low_f",
+              "high": "lvmi_high_f"
+            }
+          ]
+        },
+        {
+          "id": "rwt",
+          "unit": "ratio",
+          "derive": "2*pwd/lvedd",
+          "min": 0.1,
+          "max": 1.5,
+          "decimals": 2,
+          "sourceId": "ase2015",
+          "diagram": "plax",
+          "calculator": "lvmass-rwt",
+          "norms": [
+            {
+              "high": "rwt_high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "valves",
+      "parameters": [
+        {
+          "id": "e_vel",
+          "unit": "cms",
+          "min": 10,
+          "max": 250,
+          "decimals": 0,
+          "sourceId": "ase2016",
+          "diagram": "mitral",
+          "calculator": "diastolic"
+        },
+        {
+          "id": "a_vel",
+          "unit": "cms",
+          "min": 10,
+          "max": 250,
+          "decimals": 0,
+          "sourceId": "ase2016",
+          "diagram": "mitral",
+          "calculator": "diastolic"
+        },
+        {
+          "id": "ea",
+          "unit": "ratio",
+          "derive": "e_vel/a_vel",
+          "min": 0.1,
+          "max": 6,
+          "decimals": 2,
+          "sourceId": "ase2016",
+          "diagram": "mitral",
+          "calculator": "diastolic"
+        },
+        {
+          "id": "e_sept",
+          "unit": "cms",
+          "min": 1,
+          "max": 30,
+          "decimals": 1,
+          "sourceId": "ase2016",
+          "diagram": "tdi",
+          "calculator": "diastolic",
+          "norms": [
+            {
+              "low": "e_sept_low"
+            }
+          ]
+        },
+        {
+          "id": "e_lat",
+          "unit": "cms",
+          "min": 1,
+          "max": 30,
+          "decimals": 1,
+          "sourceId": "ase2016",
+          "diagram": "tdi",
+          "calculator": "diastolic",
+          "norms": [
+            {
+              "low": "e_lat_low"
+            }
+          ]
+        },
+        {
+          "id": "ee_avg",
+          "unit": "ratio",
+          "derive": "e_vel/((e_sept+e_lat)/2)",
+          "min": 1,
+          "max": 50,
+          "decimals": 1,
+          "sourceId": "ase2016",
+          "diagram": "tdi",
+          "calculator": "diastolic",
+          "norms": [
+            {
+              "high": "ee_avg_high"
+            }
+          ]
+        },
+        {
+          "id": "av_vmax",
+          "unit": "ms",
+          "min": 0.5,
+          "max": 7,
+          "decimals": 1,
+          "sourceId": "ase2017as",
+          "diagram": "cw",
+          "norms": [
+            {
+              "high": "av_vmax_high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hemodynamics",
+      "parameters": [
+        {
+          "id": "trv",
+          "unit": "ms",
+          "min": 0.5,
+          "max": 7,
+          "decimals": 1,
+          "sourceId": "esc2022ph",
+          "diagram": "cw",
+          "calculator": "pasp",
+          "norms": [
+            {
+              "high": "trv_high"
+            }
+          ]
+        },
+        {
+          "id": "rap",
+          "unit": "mmhg",
+          "derive": "if(ivc<=ivc_high, if(ivc_collapse>ivc_collapse_low, 3, 8), if(ivc_collapse<ivc_collapse_low, 15, 8))",
+          "min": 0,
+          "max": 30,
+          "decimals": 0,
+          "sourceId": "rudski2010",
+          "diagram": "ivc",
+          "calculator": "rap-ivc"
+        },
+        {
+          "id": "pasp",
+          "unit": "mmhg",
+          "derive": "4*trv^2+rap",
+          "min": 5,
+          "max": 150,
+          "decimals": 0,
+          "sourceId": "rudski2010",
+          "diagram": "cw",
+          "calculator": "pasp"
+        }
+      ]
+    },
+    {
+      "id": "right_heart",
+      "parameters": [
+        {
+          "id": "rv_basal",
+          "unit": "mm",
+          "min": 10,
+          "max": 80,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "norms": [
+            {
+              "high": "rv_basal_high"
+            }
+          ]
+        },
+        {
+          "id": "tapse",
+          "unit": "mm",
+          "min": 3,
+          "max": 40,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "mmode",
+          "norms": [
+            {
+              "low": "tapse_low"
+            }
+          ]
+        },
+        {
+          "id": "rv_sprime",
+          "unit": "cms",
+          "min": 2,
+          "max": 30,
+          "decimals": 1,
+          "sourceId": "ase2015",
+          "diagram": "tdi",
+          "norms": [
+            {
+              "low": "rv_sprime_low"
+            }
+          ]
+        },
+        {
+          "id": "rv_fac",
+          "unit": "pct",
+          "min": 5,
+          "max": 80,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "a4c",
+          "norms": [
+            {
+              "low": "rv_fac_low"
+            }
+          ]
+        },
+        {
+          "id": "ivc",
+          "unit": "mm",
+          "min": 3,
+          "max": 50,
+          "decimals": 0,
+          "sourceId": "rudski2010",
+          "diagram": "ivc",
+          "calculator": "rap-ivc",
+          "norms": [
+            {
+              "high": "ivc_high"
+            }
+          ]
+        },
+        {
+          "id": "ivc_collapse",
+          "unit": "pct",
+          "min": 0,
+          "max": 100,
+          "decimals": 0,
+          "sourceId": "rudski2010",
+          "diagram": "ivc",
+          "calculator": "rap-ivc",
+          "norms": [
+            {
+              "low": "ivc_collapse_low",
+              "lowExclusive": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pericardium",
+      "parameters": [
+        {
+          "id": "peri",
+          "unit": "mm",
+          "min": 0,
+          "max": 60,
+          "decimals": 0,
+          "sourceId": "esc2015peri",
+          "diagram": "peri"
+        }
+      ]
+    },
+    {
+      "id": "aorta_pa",
+      "parameters": [
+        {
+          "id": "ao_root",
+          "unit": "mm",
+          "min": 10,
+          "max": 80,
+          "decimals": 0,
+          "sourceId": "ase2015",
+          "diagram": "plax"
+        },
+        {
+          "id": "pa_diam",
+          "unit": "mm",
+          "min": 10,
+          "max": 60,
+          "decimals": 0,
+          "sourceId": "esc2015ph",
+          "diagram": "psax",
+          "norms": [
+            {
+              "high": "pa_diam_high"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="uz-Cyrl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#c62828">
+  <title></title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/app-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <script src="js/theme-init.js"></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="ui.skipToContent"></a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="#home">
+        <svg class="icon icon--arterial" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#heart"></use></svg>
+        <span>
+          <span class="brand__title" data-i18n="app.title"></span>
+          <span class="brand__tagline" data-i18n="app.tagline"></span>
+        </span>
+      </a>
+      <div class="controls">
+        <fieldset class="segmented" id="lang-switch">
+          <legend class="visually-hidden" data-i18n="ui.language"></legend>
+        </fieldset>
+        <div id="user-badge"></div>
+        <fieldset class="segmented" id="theme-switch">
+          <legend class="visually-hidden" data-i18n="ui.theme"></legend>
+          <button type="button" data-theme-value="light" data-i18n="ui.themeLight"></button>
+          <button type="button" data-theme-value="dark" data-i18n="ui.themeDark"></button>
+          <button type="button" data-theme-value="system" data-i18n="ui.themeSystem"></button>
+        </fieldset>
+      </div>
+    </div>
+  </header>
+
+  <nav class="site-nav" data-i18n-aria-label="nav.label">
+    <ul id="nav-list"></ul>
+  </nav>
+
+  <div class="banners">
+    <p class="banner" id="test-mode-banner" role="status" data-i18n="ui.testMode" hidden></p>
+    <p class="banner" id="offline-banner" role="status" data-i18n="ui.offline" hidden></p>
+    <p class="banner" id="demo-banner" role="status" data-i18n="ui.demoMode" hidden></p>
+    <p class="banner banner--error" id="calc-test-banner" role="alert" data-i18n="ui.calcTestsFailed" hidden></p>
+  </div>
+
+  <main id="main" tabindex="-1"></main>
+
+  <footer class="site-footer">
+    <p data-i18n="disclaimer.text"></p>
+  </footer>
+
+  <noscript><p>JavaScript is required. / JavaScript талаб қилинади. / Требуется JavaScript.</p></noscript>
+</body>
+</html>

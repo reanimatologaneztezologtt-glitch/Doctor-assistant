@@ -1,0 +1,14 @@
+{
+  "sources": [
+    { "id": "ase2015", "short": "ASE/EACVI 2015", "year": 2015, "citation": "Lang RM, Badano LP, Mor-Avi V, et al. Recommendations for cardiac chamber quantification by echocardiography in adults: an update from the American Society of Echocardiography and the European Association of Cardiovascular Imaging. J Am Soc Echocardiogr. 2015;28(1):1-39.e14." },
+    { "id": "ase2016", "short": "ASE/EACVI 2016", "year": 2016, "citation": "Nagueh SF, Smiseth OA, Appleton CP, et al. Recommendations for the evaluation of left ventricular diastolic function by echocardiography: an update from the American Society of Echocardiography and the European Association of Cardiovascular Imaging. J Am Soc Echocardiogr. 2016;29(4):277-314." },
+    { "id": "rudski2010", "short": "ASE 2010 (Rudski)", "year": 2010, "citation": "Rudski LG, Lai WW, Afilalo J, et al. Guidelines for the echocardiographic assessment of the right heart in adults: a report from the American Society of Echocardiography. J Am Soc Echocardiogr. 2010;23(7):685-713." },
+    { "id": "ase2017as", "short": "EACVI/ASE 2017", "year": 2017, "citation": "Baumgartner H, Hung J, Bermejo J, et al. Recommendations on the echocardiographic assessment of aortic valve stenosis: a focused update from the European Association of Cardiovascular Imaging and the American Society of Echocardiography. J Am Soc Echocardiogr. 2017;30(4):372-392." },
+    { "id": "esc2022ph", "short": "ESC/ERS 2022", "year": 2022, "citation": "Humbert M, Kovacs G, Hoeper MM, et al. 2022 ESC/ERS Guidelines for the diagnosis and treatment of pulmonary hypertension. Eur Heart J. 2022;43(38):3618-3731." },
+    { "id": "esc2015ph", "short": "ESC/ERS 2015", "year": 2015, "citation": "Galiè N, Humbert M, Vachiery JL, et al. 2015 ESC/ERS Guidelines for the diagnosis and treatment of pulmonary hypertension. Eur Heart J. 2016;37(1):67-119." },
+    { "id": "esc2015peri", "short": "ESC 2015", "year": 2015, "citation": "Adler Y, Charron P, Imazio M, et al. 2015 ESC Guidelines for the diagnosis and management of pericardial diseases. Eur Heart J. 2015;36(42):2921-2964." },
+    { "id": "devereux1986", "short": "Devereux 1986", "year": 1986, "citation": "Devereux RB, Alonso DR, Lutas EM, et al. Echocardiographic assessment of left ventricular hypertrophy: comparison to necropsy findings. Am J Cardiol. 1986;57(6):450-458." },
+    { "id": "teichholz1976", "short": "Teichholz 1976", "year": 1976, "citation": "Teichholz LE, Kreulen T, Herman MV, Gorlin R. Problems in echocardiographic volume determinations: echocardiographic-angiographic correlations in the presence or absence of asynergy. Am J Cardiol. 1976;37(1):7-11." },
+    { "id": "mosteller1987", "short": "Mosteller 1987", "year": 1987, "citation": "Mosteller RD. Simplified calculation of body-surface area. N Engl J Med. 1987;317(17):1098." }
+  ]
+}

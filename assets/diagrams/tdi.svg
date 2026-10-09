@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" class="dg">
+  <!-- Schematic tissue Doppler of the annulus: s', e', a'. -->
+  <line class="dg-axis" x1="20" y1="80" x2="300" y2="80"/>
+  <path class="dg-ven-fill" d="M40 80 L60 40 L80 80 Z"/>
+  <path class="dg-ven-fill" d="M120 80 L140 130 L160 80 Z"/>
+  <path class="dg-ven-fill" d="M190 80 L205 115 L220 80 Z"/>
+  <line class="dg-measure" x1="140" y1="80" x2="140" y2="130"/>
+  <text class="dg-label" x="56" y="34">s′</text>
+  <text class="dg-label" x="136" y="148">e′</text>
+  <text class="dg-label" x="200" y="132">a′</text>
+</svg>

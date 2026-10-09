@@ -1,0 +1,70 @@
+{
+  "id": "pasp",
+  "group": "pasp",
+  "sourceIds": [
+    "rudski2010",
+    "esc2022ph"
+  ],
+  "formula": "PASP = 4 × v² + RAP  (v: peak TR velocity, m/s; RAP, mmHg)",
+  "inputs": [
+    {
+      "id": "trv",
+      "unit": "ms",
+      "min": 0.5,
+      "max": 7,
+      "step": 0.1
+    },
+    {
+      "id": "rap",
+      "unit": "mmhg",
+      "min": 0,
+      "max": 30,
+      "step": 1
+    }
+  ],
+  "outputs": [
+    {
+      "id": "gradient",
+      "expr": "4*trv^2",
+      "unit": "mmhg",
+      "decimals": 0
+    },
+    {
+      "id": "pasp",
+      "expr": "gradient+rap",
+      "unit": "mmhg",
+      "decimals": 0
+    }
+  ],
+  "norms": [
+    {
+      "output": "trv",
+      "high": "trv_high",
+      "sourceId": "esc2022ph"
+    }
+  ],
+  "tests": [
+    {
+      "inputs": {
+        "trv": 3.0,
+        "rap": 8
+      },
+      "expected": {
+        "gradient": 36,
+        "pasp": 44
+      },
+      "tolerance": 0.001
+    },
+    {
+      "inputs": {
+        "trv": 3.6,
+        "rap": 15
+      },
+      "expected": {
+        "gradient": 51.84,
+        "pasp": 66.84
+      },
+      "tolerance": 0.001
+    }
+  ]
+}

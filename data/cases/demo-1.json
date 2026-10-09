@@ -1,0 +1,13 @@
+{
+  "id": "demo-1",
+  "synthetic": true,
+  "note": "Synthetic teaching example. Not a real patient.",
+  "measurements": {
+    "sex": 1, "height": 175, "weight": 82,
+    "lvedd": 52, "lvesd": 36, "lvedv": 130, "lvesv": 58, "lav": 78,
+    "ivsd": 12, "pwd": 12,
+    "e_vel": 95, "a_vel": 70, "e_sept": 6, "e_lat": 8, "av_vmax": 1.4,
+    "trv": 3.0, "rv_basal": 38, "tapse": 20, "rv_sprime": 11, "rv_fac": 42,
+    "ivc": 19, "ivc_collapse": 40, "peri": 0, "ao_root": 34, "pa_diam": 23
+  }
+}

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 170" class="dg">
+  <!-- Schematic continuous-wave Doppler envelope with peak velocity. -->
+  <line class="dg-axis" x1="20" y1="30" x2="300" y2="30"/>
+  <path class="dg-ven-fill" d="M50 30 C70 150 140 150 170 30 Z"/>
+  <line class="dg-measure" x1="110" y1="30" x2="110" y2="140"/>
+  <line class="dg-axis" x1="20" y1="140" x2="300" y2="140" stroke-dasharray="4 4"/>
+  <text class="dg-label" x="118" y="160">Vmax</text>
+  <text class="dg-label" x="190" y="100">ΔP = 4v²</text>
+</svg>

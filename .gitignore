@@ -1,0 +1,11 @@
+# Secrets: ANTHROPIC_API_KEY and payment keys live only in server environment
+.env
+.env.*
+!.env.example
+
+node_modules/
+*.log
+.DS_Store
+test-results/
+server/data/
+dist/

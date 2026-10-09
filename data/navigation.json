@@ -1,0 +1,13 @@
+{
+  "items": [
+    { "id": "home",        "labelKey": "nav.home",        "icon": "heart" },
+    { "id": "echo",        "labelKey": "nav.echo",        "icon": "echo" },
+    { "id": "calculators", "labelKey": "nav.calculators", "icon": "calculator" },
+    { "id": "conclusion",  "labelKey": "nav.conclusion",  "icon": "doc" },
+    { "id": "assistant",   "labelKey": "nav.assistant",   "icon": "chat" },
+    { "id": "questions",   "labelKey": "nav.questions",   "icon": "question" },
+    { "id": "plans",       "labelKey": "nav.plans",       "icon": "plan" },
+    { "id": "account",     "labelKey": "nav.account",     "icon": "user" },
+    { "id": "admin",       "labelKey": "nav.admin",       "icon": "shield", "requires": "admin" }
+  ]
+}

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" class="dg">
+  <!-- Schematic apical four-chamber view with method-of-disks traces. -->
+  <path class="dg-sector" d="M160 6 L18 210 A190 190 0 0 0 302 210 Z"/>
+  <path class="dg-art" d="M160 24 C110 40 100 110 112 140 L158 140 L158 30 Z"/>
+  <path class="dg-ven" d="M162 30 C210 50 216 110 206 140 L162 140 Z"/>
+  <ellipse class="dg-art" cx="134" cy="172" rx="28" ry="26"/>
+  <ellipse class="dg-ven" cx="186" cy="172" rx="26" ry="24"/>
+  <g class="dg-measure">
+    <line x1="116" y1="70" x2="156" y2="70"/>
+    <line x1="112" y1="90" x2="156" y2="90"/>
+    <line x1="110" y1="110" x2="156" y2="110"/>
+    <line x1="112" y1="130" x2="156" y2="130"/>
+    <line x1="170" y1="128" x2="206" y2="128"/>
+  </g>
+  <text class="dg-label" x="122" y="58">LV</text>
+  <text class="dg-label" x="176" y="58">RV</text>
+  <text class="dg-label" x="124" y="178">LA</text>
+  <text class="dg-label" x="176" y="178">RA</text>
+  <text class="dg-label" x="210" y="124">RVD1</text>
+</svg>
