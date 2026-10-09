@@ -43,6 +43,31 @@
   --duration: 160ms;
 }
 
+/* Same dark values for "system" when JS has not set data-theme yet. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --color-bg: #121417;
+    --color-surface: #1b1f25;
+    --color-surface-raised: #232831;
+    --color-text: #e8eaed;
+    --color-text-muted: #aab1bc;
+    --color-border: #4a525e;
+
+    --color-arterial: #ef8a8a;
+    --color-venous: #8ab8f5;
+
+    --color-accent: var(--color-venous);
+    --color-on-accent: #0b1a2e;
+    --color-focus: #8ab8f5;
+
+    --color-notice-bg: #33260f;
+    --color-notice-text: #ffdcaa;
+    --color-notice-border: #8a6420;
+  }
+}
+
 :root[data-theme="dark"] {
   color-scheme: dark;
 

@@ -125,7 +125,7 @@ function renderNav() {
   const list = document.getElementById('nav-list');
   const active = currentRouteId();
   list.replaceChildren(...state.nav.map((item) => {
-    const link = el('a', { href: `#/${item.id}` }, [icon(item.icon), el('span', { text: state.t(item.labelKey) })]);
+    const link = el('a', { href: `#${item.id}` }, [icon(item.icon), el('span', { text: state.t(item.labelKey) })]);
     if (item.id === active) link.setAttribute('aria-current', 'page');
     return el('li', {}, [link]);
   }));
