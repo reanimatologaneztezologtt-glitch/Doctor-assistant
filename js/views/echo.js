@@ -2,6 +2,7 @@
 import { computeMeasurements } from '../core/measurements.js';
 import { el } from '../ui/dom.js';
 import { openParamModal } from './param-modal.js';
+import { sourceShort } from './common.js';
 import { normLine, paramAbbr, paramName, statusChip, valueLines } from './param-text.js';
 
 export function renderEcho(ctx) {
@@ -16,7 +17,8 @@ export function renderEcho(ctx) {
       const param = box.param;
       box.status.replaceChildren();
       box.lines.replaceChildren();
-      box.norm.textContent = normLine(ctx, param, sex);
+      // Spec: the source (name and year) is shown next to every reference value.
+      box.norm.textContent = `${normLine(ctx, param, sex)} · ${sourceShort(ctx, param.sourceId)}`;
       const value = values[id];
       if (derived.has(id) && box.derivedOut) box.derivedOut.textContent = ctx.fmt.withUnit(value, param.unit, param.decimals ?? 1);
       else if (box.derivedOut) box.derivedOut.textContent = '—';

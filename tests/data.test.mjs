@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readJson } from './helpers.mjs';
+import { read, readJson } from './helpers.mjs';
 import { parse, variables } from '../js/core/expr.js';
 import { allParameters, computeMeasurements, paramStatus } from '../js/core/measurements.js';
 import { evaluateRules } from '../js/core/rules.js';
@@ -137,4 +137,9 @@ test('exactly one RAP, PH-probability and AS rule fires for any value', () => {
     const f = evaluateRules(rules, { av_vmax: v }, thr).filter((x) => x.ruleId.startsWith('as_')).map((x) => x.ruleId);
     assert.deepEqual(f, id ? [id] : []);
   }
+});
+
+test('every source short name carries a year (shown next to each norm)', () => {
+  for (const s of readJson('data/sources.json').sources) assert.match(s.short, /\b(19|20)\d{2}\b/, s.id);
+  assert.match(read('js/views/echo.js'), /normLine\(ctx, param, sex\)\} · \$\{sourceShort\(ctx, param\.sourceId\)\}/);
 });
