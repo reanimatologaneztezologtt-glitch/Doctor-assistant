@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "languageName": "English",
+    "languageShort": "EN",
+    "htmlLang": "en"
+  },
+  "app": {
+    "title": "Doctor Assistant",
+    "tagline": "Educational platform for echocardiography"
+  },
+  "nav": {
+    "label": "Main menu",
+    "home": "Home",
+    "echo": "Echo parameters",
+    "calculators": "Calculators",
+    "assistant": "AI assistant",
+    "plans": "Plans",
+    "account": "Account"
+  },
+  "ui": {
+    "skipToContent": "Skip to main content",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "offline": "Offline: using cached content.",
+    "testMode": "Test mode: all users are on the free plan, payments are disabled.",
+    "comingSoon": "This section will be added in step {step} of the work plan.",
+    "notFound": "Page not found.",
+    "loadError": "Could not load data. Please reload the page."
+  },
+  "home": {
+    "heading": "Welcome",
+    "intro": "The platform is intended for physicians, residents and medical students. It presents echocardiography parameters, reference values and calculators with their sources.",
+    "notDiagnostic": "This site does not provide individual diagnoses or treatment decisions.",
+    "privacy": "Patient name, ID and date of birth are neither requested nor stored. Measurements you enter stay in your browser only."
+  },
+  "sections": {
+    "echo": "Chambers, walls, valves, hemodynamics, right heart, pericardium, aorta and pulmonary artery (in ASE/EACVI order).",
+    "calculators": "EF (Teichholz, Simpson), LV mass index (Devereux) and RWT, E/A and E/e', PASP.",
+    "assistant": "Educational assistant that explains formulas and parameters. It does not diagnose.",
+    "plans": "Plans and subscription (currently in test mode).",
+    "account": "Registration, roles and physician license verification."
+  },
+  "disclaimer": {
+    "text": "For educational purposes. Clinical decisions are made by a qualified physician."
+  },
+  "terms": {
+    "ef": {
+      "short": "EF",
+      "full": "Left ventricular ejection fraction"
+    },
+    "lvmi": {
+      "short": "LVMi",
+      "full": "Left ventricular mass index"
+    },
+    "rwt": {
+      "short": "RWT",
+      "full": "Relative wall thickness"
+    },
+    "pasp": {
+      "short": "PASP",
+      "full": "Pulmonary artery systolic pressure"
+    }
+  }
+}

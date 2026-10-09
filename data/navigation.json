@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "id": "home",        "labelKey": "nav.home",        "icon": "heart",      "readyInStep": 1, "bodyKey": null },
+    { "id": "echo",        "labelKey": "nav.echo",        "icon": "echo",       "readyInStep": 3, "bodyKey": "sections.echo" },
+    { "id": "calculators", "labelKey": "nav.calculators", "icon": "calculator", "readyInStep": 4, "bodyKey": "sections.calculators" },
+    { "id": "assistant",   "labelKey": "nav.assistant",   "icon": "chat",       "readyInStep": 5, "bodyKey": "sections.assistant" },
+    { "id": "plans",       "labelKey": "nav.plans",       "icon": "plan",       "readyInStep": 6, "bodyKey": "sections.plans" },
+    { "id": "account",     "labelKey": "nav.account",     "icon": "user",       "readyInStep": 2, "bodyKey": "sections.account" }
+  ]
+}
