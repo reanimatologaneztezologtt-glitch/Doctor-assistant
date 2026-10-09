@@ -35,6 +35,14 @@ export function createService({ store, hasher, randomId, config, plans, rules, s
     if (!isAdmin(actor)) throw new ServiceError('forbidden', 403);
     return actor;
   }
+  function currentStatuses() {
+    const out = {};
+    for (const d of store.all('ruleDecisions')) {
+      if (d.action === 'revoke') delete out[d.ruleId];
+      else out[d.ruleId] = d; // last decision wins
+    }
+    return out;
+  }
   function planFor(user) {
     const id = effectivePlan(user, config, now());
     return plans.plans.find((p) => p.id === id) || plans.plans.find((p) => p.id === 'free');
@@ -97,8 +105,8 @@ export function createService({ store, hasher, randomId, config, plans, rules, s
       const user = store.find('users', (u) => u.id === userId);
       if (!user) throw new ServiceError('notFound', 404);
       if (user.role !== 'doctor') throw new ServiceError('notDoctor', 400);
-      if (!['approve', 'reject'].includes(action)) throw new ServiceError('badAction', 400);
-      const verification = action === 'approve' ? VERIFICATION.approved : VERIFICATION.rejected;
+      if (!['approve', 'reject', 'revoke'].includes(action)) throw new ServiceError('badAction', 400);
+      const verification = { approve: VERIFICATION.approved, reject: VERIFICATION.rejected, revoke: VERIFICATION.pending }[action];
       store.update('users', userId, { verification, verifiedAt: iso(), verifiedBy: actor.id });
       journal('verification', { adminId: actor.id, userId, action, note: String(note).slice(0, 500) });
       return publicUser(store.find('users', (u) => u.id === userId));
@@ -112,24 +120,34 @@ export function createService({ store, hasher, randomId, config, plans, rules, s
 
     // ---- medical rule approval ------------------------------------------
     ruleStatuses() {
-      const out = {};
-      for (const d of store.all('ruleDecisions')) out[d.ruleId] = d; // last decision wins
-      return out;
+      return currentStatuses();
     },
 
+    ruleDecisions(actor) {
+      requireAdmin(actor);
+      return store.all('ruleDecisions').reverse();
+    },
+
+    // Actions: approve, reject; an admin may also revoke (back to "not reviewed").
+    // A later decision replaces the earlier one; all are kept in the journal.
     decideRule(actor, ruleId, action) {
       requireUser(actor);
       const rule = ruleById.get(ruleId);
       if (!rule) throw new ServiceError('notFound', 404);
-      if (!['approve', 'reject'].includes(action)) throw new ServiceError('badAction', 400);
+      if (!['approve', 'reject', 'revoke'].includes(action)) throw new ServiceError('badAction', 400);
       const check = canApprove(actor, rule.specialty);
       if (!check.ok) throw new ServiceError(check.reason, 403);
+      if (action === 'revoke' && check.as !== 'admin') throw new ServiceError('forbidden', 403);
+      const previous = currentStatuses()[ruleId] || null;
       const decision = {
         id: randomId(), ruleId, action, doctorId: actor.id, doctorName: actor.fullName,
-        specialty: actor.specialty, at: iso(),
+        specialty: actor.specialty, actingAs: check.as, at: iso(),
       };
       store.insert('ruleDecisions', decision);
-      journal('approval', { target: 'rule', doctorId: actor.id, doctorName: actor.fullName, specialty: actor.specialty, ruleId, action });
+      journal('approval', {
+        target: 'rule', doctorId: actor.id, doctorName: actor.fullName, specialty: actor.specialty,
+        actingAs: check.as, ruleId, action, previousAction: previous ? previous.action : null,
+      });
       return decision;
     },
 
@@ -144,15 +162,17 @@ export function createService({ store, hasher, randomId, config, plans, rules, s
         if (!rule) throw new ServiceError('notFound', 404);
         specialtiesNeeded.add(rule.specialty);
       }
+      let actingAs = 'doctor';
       for (const sp of specialtiesNeeded) {
         const check = canApprove(actor, sp);
         if (!check.ok) throw new ServiceError(check.reason, 403);
+        actingAs = check.as;
       }
       const at = iso();
       for (const ruleId of ruleIds) {
-        journal('approval', { target: 'conclusion', doctorId: actor.id, doctorName: actor.fullName, specialty: actor.specialty, ruleId, action: 'approve' });
+        journal('approval', { target: 'conclusion', doctorId: actor.id, doctorName: actor.fullName, specialty: actor.specialty, actingAs, ruleId, action: 'approve' });
       }
-      return { approvedBy: actor.fullName, specialty: actor.specialty, at };
+      return { approvedBy: actor.fullName, specialty: actor.specialty, actingAs, at };
     },
 
     // ---- questions to doctors ---------------------------------------------

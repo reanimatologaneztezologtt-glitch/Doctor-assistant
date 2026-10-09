@@ -10,16 +10,22 @@ import { paramAbbr } from './param-text.js';
 
 let approvedState = null; // memory only: { key, approval, note }
 
-function ruleStatusChip(ctx, status) {
+export function deciderLabel(ctx, d) {
+  return `${d.doctorName}${d.actingAs === 'admin' ? ` (${ctx.t('rule.actingAsAdmin')})` : ''}`;
+}
+
+export function ruleStatusChip(ctx, status) {
   const { t } = ctx;
   if (!status) return chip(t('rule.notReviewed'), 'neutral');
-  const who = `${status.doctorName}, ${formatDate(ctx, status.at)}`;
+  const who = `${deciderLabel(ctx, status)}, ${formatDate(ctx, status.at)}`;
   return status.action === 'approve' ? chip(`${t('rule.approvedBy')} ${who}`, 'ok') : chip(`${t('rule.rejectedBy')} ${who}`, 'warn');
 }
 
-function ruleDecisionButtons(ctx, ruleId, onDone) {
+// Doctors decide within their specialty (the server rejects others);
+// admins may approve, reject or revoke any decision.
+export function ruleDecisionButtons(ctx, ruleId, status, onDone) {
   const { t, user } = ctx;
-  if (!user || user.role !== 'doctor') return null;
+  if (!user || (user.role !== 'doctor' && !user.isAdmin)) return null;
   const msg = el('span', { class: 'inline-msg', role: 'status' });
   const act = (action) => async () => {
     msg.textContent = '';
@@ -31,9 +37,11 @@ function ruleDecisionButtons(ctx, ruleId, onDone) {
       msg.className = 'inline-msg inline-msg--error';
     }
   };
+  const current = status ? status.action : null;
   return el('span', { class: 'btn-group' }, [
-    el('button', { type: 'button', class: 'btn btn--small', text: t('rule.approve'), onclick: act('approve') }),
-    el('button', { type: 'button', class: 'btn btn--small', text: t('rule.reject'), onclick: act('reject') }),
+    current !== 'approve' ? el('button', { type: 'button', class: 'btn btn--small', text: t('rule.approve'), onclick: act('approve') }) : null,
+    current !== 'reject' ? el('button', { type: 'button', class: 'btn btn--small', text: t('rule.reject'), onclick: act('reject') }) : null,
+    user.isAdmin && current ? el('button', { type: 'button', class: 'btn btn--small', text: t('rule.revoke'), onclick: act('revoke') }) : null,
     msg,
   ]);
 }
@@ -46,12 +54,17 @@ function evidenceText(ctx, finding) {
   }).join('; ');
 }
 
+function approverText(ctx, a) {
+  if (a.actingAs === 'admin') return `${a.approvedBy} (${ctx.t('rule.actingAsAdmin')})`;
+  return `${a.approvedBy} (${specialtyName(ctx, a.specialty)})`;
+}
+
 function buildPlainText(ctx, findings, approval, note) {
   const { t } = ctx;
   const lines = [t('conclusion.title'), ''];
   findings.forEach((f, i) => lines.push(`${i + 1}. ${t(`rules.${f.ruleId}`)} (${evidenceText(ctx, f)}) [${sourceShort(ctx, f.sourceId)}]`));
   if (note) lines.push('', `${t('conclusion.doctorNote')}: ${note}`);
-  lines.push('', `${t('conclusion.approvedBy')}: ${approval.approvedBy} (${specialtyName(ctx, approval.specialty)}), ${formatDate(ctx, approval.at)}`);
+  lines.push('', `${t('conclusion.approvedBy')}: ${approverText(ctx, approval)}, ${formatDate(ctx, approval.at)}`);
   lines.push('', t('disclaimer.text'));
   return lines.join('\n');
 }
@@ -76,7 +89,7 @@ export async function renderConclusion(ctx) {
     el('ul', { class: 'rule-list' }, data.rules.rules.map((r) => el('li', {}, [
       el('p', { text: t(`rules.${r.id}`) }),
       el('p', { class: 'text-muted' }, [`${t('rule.specialty')}: ${specialtyName(ctx, r.specialty)} · ${t('ui.source')}: ${sourceShort(ctx, r.sourceId)} · `, el('code', { text: r.when })]),
-      el('div', { class: 'rule-actions' }, [ruleStatusChip(ctx, statuses[r.id]), ruleDecisionButtons(ctx, r.id, () => ctx.rerender())]),
+      el('div', { class: 'rule-actions' }, [ruleStatusChip(ctx, statuses[r.id]), ruleDecisionButtons(ctx, r.id, statuses[r.id], () => ctx.rerender())]),
     ]))),
   ]);
 
@@ -96,7 +109,7 @@ export async function renderConclusion(ctx) {
       el('p', { class: 'finding__text', text: t(`rules.${f.ruleId}`) }),
       el('p', { class: 'finding__evidence' }, [el('span', { class: 'text-muted', text: `${t('conclusion.evidence')}: ` }), evidenceText(ctx, f)]),
       el('p', { class: 'text-muted' }, [`${t('ui.source')}: ${sourceShort(ctx, f.sourceId)} · `, ruleStatusChip(ctx, statuses[f.ruleId])]),
-      ruleDecisionButtons(ctx, f.ruleId, () => ctx.rerender()),
+      ruleDecisionButtons(ctx, f.ruleId, statuses[f.ruleId], () => ctx.rerender()),
     ]))),
   ]);
 
@@ -109,7 +122,7 @@ export async function renderConclusion(ctx) {
     actions.append(
       el('h2', { text: t('conclusion.approvedHeading') }),
       approvedState.note ? el('div', { class: 'doctor-note' }, [el('strong', { text: `${t('conclusion.doctorNote')}: ` }), approvedState.note]) : null,
-      el('p', { text: `${t('conclusion.approvedBy')}: ${approvedState.approval.approvedBy} (${specialtyName(ctx, approvedState.approval.specialty)}), ${formatDate(ctx, approvedState.approval.at)}` }),
+      el('p', { text: `${t('conclusion.approvedBy')}: ${approverText(ctx, approvedState.approval)}, ${formatDate(ctx, approvedState.approval.at)}` }),
       pre,
       el('button', {
         type: 'button', class: 'btn btn--primary', text: t('conclusion.copy'),

@@ -117,6 +117,7 @@ export async function createDemoBackend({ data }) {
     listUsers: wrap(async () => service.listUsers(actor())),
     verifyDoctor: wrap(async (id, action, note) => service.verifyDoctor(actor(), id, action, note)),
     journal: wrap(async (kind) => service.journal(actor(), kind)),
+    ruleDecisions: wrap(async () => service.ruleDecisions(actor())),
     ruleStatuses: wrap(async () => service.ruleStatuses()),
     decideRule: wrap(async (ruleId, action) => service.decideRule(actor(), ruleId, action)),
     approveConclusion: wrap(async (ruleIds) => service.approveConclusion(actor(), ruleIds)),

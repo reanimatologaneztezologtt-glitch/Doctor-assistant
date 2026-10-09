@@ -35,16 +35,26 @@ export function isAdmin(user) {
   return Boolean(user && user.isAdmin);
 }
 
-// Only a verified doctor may approve, and only within their own specialty.
-// Admin rights do not grant approval of medical content.
+// Approval of medical content (rules, draft conclusions):
+// - an admin may approve, reject or change any decision in any specialty
+//   (owner's decision, overrides the original spec 4.2 restriction);
+// - otherwise only a verified doctor, and only within their own specialty.
+// The result says in which capacity the user acts, so it can be shown and logged.
 export function canApprove(user, specialty) {
   if (!user) return { ok: false, reason: 'notSignedIn' };
+  if (isAdmin(user)) return { ok: true, as: 'admin' };
+  return doctorCheck(user, specialty);
+}
+
+// Answering questions stays with verified doctors of the specialty.
+export function canAnswerQuestion(user, question) {
+  if (!user) return { ok: false, reason: 'notSignedIn' };
+  return doctorCheck(user, question.specialty);
+}
+
+function doctorCheck(user, specialty) {
   if (user.role !== 'doctor') return { ok: false, reason: 'notDoctor' };
   if (user.verification !== VERIFICATION.approved) return { ok: false, reason: 'notVerified' };
   if (user.specialty !== specialty) return { ok: false, reason: 'otherSpecialty' };
-  return { ok: true };
-}
-
-export function canAnswerQuestion(user, question) {
-  return canApprove(user, question.specialty);
+  return { ok: true, as: 'doctor' };
 }

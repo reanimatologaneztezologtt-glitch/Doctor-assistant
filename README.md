@@ -76,8 +76,13 @@ approves them.
 
 ## Rules enforced in code
 
-- Approval: only a doctor with an admin-verified license, only within the
-  rule's specialty. Admin rights do not grant approval. Every decision is logged.
+- Approval of medical content (rules, draft conclusions): a doctor with an
+  admin-verified license within the rule's specialty, or an admin in any
+  specialty. An admin can also change or revoke any rule decision and any
+  doctor verification. Admin actions are marked "admin" in the UI and logged
+  with `actingAs: "admin"` and the previous decision. (Owner's decision; it
+  replaces the original spec 4.2 restriction on admins.) Answering questions
+  stays with verified doctors of the specialty.
 - Draft conclusions are not stored or exported until approved; the approval log
   holds rule ids only, never measurement values.
 - Measurements stay in the browser. Questions to doctors and AI requests are

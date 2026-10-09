@@ -130,6 +130,7 @@ export function createApp({ root, store, aiClient = null, now = () => Date.now()
     ['POST', /^admin\/users\/([\w-]+)\/verify$/, ({ user, body, m }) => [200, { user: service.verifyDoctor(user, m[1], body.action, body.note) }]],
     ['GET', /^admin\/journal$/, ({ user, url }) => [200, { entries: service.journal(user, url.searchParams.get('kind') || undefined) }]],
     ['POST', /^admin\/refund$/, ({ user, body }) => [200, service.refund(user, body.paymentId)]],
+    ['GET', /^admin\/rule-decisions$/, ({ user }) => [200, { decisions: service.ruleDecisions(user) }]],
     ['GET', /^rules\/status$/, () => [200, { statuses: service.ruleStatuses() }]],
     ['POST', /^rules\/([\w-]+)\/decision$/, ({ user, body, m }) => [200, service.decideRule(user, m[1], body.action)]],
     ['POST', /^conclusions\/approve$/, ({ user, body }) => [200, service.approveConclusion(user, body.ruleIds)]],

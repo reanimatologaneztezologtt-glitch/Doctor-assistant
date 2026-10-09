@@ -22,6 +22,7 @@ export function createHttpBackend() {
     listUsers: () => call('GET', 'admin/users').then((d) => d.users),
     verifyDoctor: (userId, action, note) => call('POST', `admin/users/${encodeURIComponent(userId)}/verify`, { action, note }),
     journal: (kind) => call('GET', `admin/journal${kind ? `?kind=${encodeURIComponent(kind)}` : ''}`).then((d) => d.entries),
+    ruleDecisions: () => call('GET', 'admin/rule-decisions').then((d) => d.decisions),
     ruleStatuses: () => call('GET', 'rules/status').then((d) => d.statuses),
     decideRule: (ruleId, action) => call('POST', `rules/${encodeURIComponent(ruleId)}/decision`, { action }),
     approveConclusion: (ruleIds) => call('POST', 'conclusions/approve', { ruleIds }),

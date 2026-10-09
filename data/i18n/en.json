@@ -591,7 +591,7 @@
     "noFindings": "Not enough measurements for the rules. Enter echo parameters first or load the teaching example.",
     "goToEcho": "Go to echo parameters",
     "allRules": "All rules ({count})",
-    "rulesHelp": "Each rule can be approved or rejected only by a verified doctor of its specialty. Every action is logged.",
+    "rulesHelp": "A rule is approved or rejected by a verified doctor of its specialty or by an admin; an admin can also change the decision. Every action is logged.",
     "approveHeading": "Approve the conclusion",
     "approve": "Approve",
     "doctorNote": "Doctor’s note",
@@ -610,7 +610,9 @@
     "rejectedBy": "Rule rejected by",
     "approve": "Approve rule",
     "reject": "Reject",
-    "specialty": "Specialty"
+    "specialty": "Specialty",
+    "revoke": "Revoke decision",
+    "actingAsAdmin": "admin"
   },
   "ai": {
     "intro": "The learning assistant explains formulas and parameters and comments on calculator results. It does not diagnose or recommend treatment.",
@@ -749,7 +751,7 @@
     "higher_nursing": "Higher nursing"
   },
   "admin": {
-    "note": "Admins manage users, license checks, settings and logs. Admin rights do not include approving medical content.",
+    "note": "Admins manage users, license checks, settings and logs. An admin may approve, reject and change all medical decisions (rules and conclusions); these actions are logged and marked \"admin\".",
     "users": "Users and license verification",
     "license": "License / diploma",
     "approve": "Approve",
@@ -758,7 +760,19 @@
     "settings": "Settings",
     "settingsNote": "Global flags are changed on the server in config/app.json.",
     "on": "on",
-    "off": "off"
+    "off": "off",
+    "revoke": "Back to pending",
+    "decisions": "Medical decisions: rules",
+    "decisionsNote": "For each rule you can approve, reject or revoke the decision. Earlier decisions stay in the history.",
+    "decisionsHistory": "Decision history",
+    "rule": "Rule",
+    "decision": "Decision",
+    "decidedBy": "Decided by",
+    "action": {
+      "approve": "Approved",
+      "reject": "Rejected",
+      "revoke": "Revoked"
+    }
   },
   "journal": {
     "all": "All",
@@ -779,7 +793,7 @@
     "serverError": "Server error. Please try again later.",
     "notSignedIn": "Please sign in first.",
     "forbidden": "You do not have permission for this action.",
-    "notDoctor": "Only doctors can approve. Residents and students send a question to a doctor.",
+    "notDoctor": "Only a verified doctor or an admin can approve. Residents and students send a question to a doctor.",
     "notVerified": "Your license is not verified yet: you can view rules but not approve them.",
     "otherSpecialty": "Rejected by the system: this rule belongs to another specialty. You can approve only within your own specialty.",
     "validation": "The form has errors. Correct the marked fields.",

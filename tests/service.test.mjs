@@ -74,7 +74,7 @@ test('new doctor is pending; admin verifies; every decision is logged (spec 4.3)
   assert.equal(admins.find((u) => u.id === doc.id).licenseNumber, 'L-1', 'admin sees license for verification');
 });
 
-test('approval rights (spec 4.2): only verified doctors, only own specialty', async () => {
+test('approval rights: verified doctors in own specialty; admin in any specialty (owner decision)', async () => {
   const { service, reg, fresh } = setup();
   const admin = await reg('admin@x.uz', 'doctor', { specialty: 'functional_diagnostics' });
   service.grantAdmin('admin@x.uz');
@@ -92,15 +92,43 @@ test('approval rights (spec 4.2): only verified doctors, only own specialty', as
   await expectCode(decide(resident), 'notDoctor');
   await expectCode(decide(student), 'notDoctor');
   await expectCode(decide(anest), 'otherSpecialty');
-  await expectCode(decide(admin), 'otherSpecialty'); // admin rights do not grant approval
   await expectCode(() => service.decideRule(null, 'lvef_reduced', 'approve'), 'notSignedIn');
   const d = service.decideRule(fresh(cardio.id), 'lvef_reduced', 'approve');
   assert.equal(d.specialty, 'cardiology');
   assert.equal(service.ruleStatuses().lvef_reduced.doctorName, 'c@x.uz');
+  assert.equal(d.actingAs, 'doctor');
+  await expectCode(() => service.decideRule(fresh(cardio.id), 'lvef_reduced', 'revoke'), 'forbidden');
   const log = service.journal(fresh(admin.id), 'approval');
   assert.equal(log.length, 1);
-  for (const field of ['doctorId', 'specialty', 'at', 'ruleId', 'action']) assert.ok(log[0][field], `journal.${field}`);
+  for (const field of ['doctorId', 'specialty', 'at', 'ruleId', 'action', 'actingAs']) assert.ok(log[0][field], `journal.${field}`);
   assert.equal(canApprove(null, 'cardiology').reason, 'notSignedIn');
+});
+
+test('admin approves, rejects and changes decisions in any specialty; history is kept', async () => {
+  const { service, reg, fresh } = setup();
+  const admin = await reg('admin@x.uz', 'resident');
+  service.grantAdmin('admin@x.uz');
+  const cardio = await reg('c@x.uz', 'doctor');
+  service.verifyDoctor(fresh(admin.id), cardio.id, 'approve');
+  service.decideRule(fresh(cardio.id), 'la_enlarged', 'approve');
+  const changed = service.decideRule(fresh(admin.id), 'la_enlarged', 'reject');
+  assert.equal(changed.actingAs, 'admin');
+  assert.equal(service.ruleStatuses().la_enlarged.action, 'reject');
+  service.decideRule(fresh(admin.id), 'la_enlarged', 'revoke');
+  assert.equal(service.ruleStatuses().la_enlarged, undefined);
+  assert.equal(service.ruleDecisions(fresh(admin.id)).length, 3);
+  const log = service.journal(fresh(admin.id), 'approval');
+  assert.deepEqual(log.map((j) => [j.action, j.previousAction, j.actingAs]), [['revoke', 'reject', 'admin'], ['reject', 'approve', 'admin'], ['approve', null, 'doctor']]);
+  const concl = service.approveConclusion(fresh(admin.id), ['la_enlarged', 'lvef_reduced']);
+  assert.equal(concl.actingAs, 'admin');
+  // Admin may also revoke a doctor's verification.
+  service.verifyDoctor(fresh(admin.id), cardio.id, 'revoke');
+  assert.equal(fresh(cardio.id).verification, 'pending');
+  assert.throws(() => service.ruleDecisions(fresh(cardio.id)), (e) => e.code === 'forbidden');
+  // Answering questions remains with doctors.
+  const s = await reg('s@x.uz', 'student');
+  const q = service.createQuestion(fresh(s.id), { specialty: 'cardiology', text: 'Why index LAV?' });
+  await expectCode(() => service.answerQuestion(fresh(admin.id), q.id, 'x'), 'notDoctor');
 });
 
 test('conclusion approval logs rule ids only, never measurement values', async () => {
@@ -113,7 +141,7 @@ test('conclusion approval logs rule ids only, never measurement values', async (
   assert.equal(res.approvedBy, 'c@x.uz');
   const entries = store.filter('journal', (j) => j.target === 'conclusion');
   assert.equal(entries.length, 2);
-  for (const e of entries) assert.deepEqual(Object.keys(e).sort(), ['action', 'at', 'doctorId', 'doctorName', 'id', 'kind', 'ruleId', 'specialty', 'target']);
+  for (const e of entries) assert.deepEqual(Object.keys(e).sort(), ['actingAs', 'action', 'at', 'doctorId', 'doctorName', 'id', 'kind', 'ruleId', 'specialty', 'target']);
   const resident = await reg('r@x.uz', 'resident');
   await expectCode(() => service.approveConclusion(fresh(resident.id), ['lvef_reduced']), 'notDoctor');
   await expectCode(() => service.approveConclusion(fresh(cardio.id), []), 'emptyConclusion');
