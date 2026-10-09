@@ -7,12 +7,17 @@
   "scripts": {
     "start": "node server/index.mjs",
     "test": "node --test tests/*.test.mjs",
-    "grant-admin": "node server/cli.mjs grant-admin"
+    "grant-admin": "node server/cli.mjs grant-admin",
+    "build:standalone": "node tools/build-standalone.mjs",
+    "build:docs": "node tools/build-docs.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.132.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

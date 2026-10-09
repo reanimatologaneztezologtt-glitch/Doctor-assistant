@@ -13,7 +13,11 @@ npm install
 npm start              # http://localhost:8080 (server mode)
 npm test               # unit, data, i18n, security and API tests
 npm run grant-admin -- someone@example.com   # system owner assigns an admin
+npm run build:standalone   # dist/doctor-assistant.html: whole site in one file, no server
+npm run build:docs         # docs/guide-uz.md: full guide in Uzbek, generated from data
 ```
+
+Full guide in Uzbek (Cyrillic): [`docs/guide-uz.md`](docs/guide-uz.md).
 
 Environment variables (server only, never committed; see `.env.example`):
 
