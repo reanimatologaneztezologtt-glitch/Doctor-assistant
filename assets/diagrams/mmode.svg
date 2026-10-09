@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" class="dg">
+  <!-- Schematic M-mode of the tricuspid annulus (TAPSE). -->
+  <path class="dg-ven" d="M20 120 C60 120 70 40 110 40 C150 40 160 120 200 120 C240 120 250 40 290 40" fill="none"/>
+  <line class="dg-measure" x1="110" y1="40" x2="110" y2="120"/>
+  <line class="dg-axis" x1="100" y1="120" x2="210" y2="120" stroke-dasharray="4 4"/>
+  <text class="dg-label" x="118" y="86">TAPSE</text>
+</svg>

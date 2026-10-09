@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" class="dg">
+  <!-- Schematic parasternal long-axis view; not an ultrasound image. -->
+  <path class="dg-sector" d="M160 8 L20 190 A180 180 0 0 0 300 190 Z"/>
+  <path class="dg-wall" d="M60 70 Q160 50 260 70 L260 84 Q160 64 60 84 Z"/>
+  <path class="dg-wall" d="M60 150 Q160 170 250 150 L250 164 Q160 184 60 164 Z"/>
+  <ellipse class="dg-art" cx="250" cy="117" rx="34" ry="22"/>
+  <ellipse class="dg-art" cx="120" cy="117" rx="62" ry="30"/>
+  <line class="dg-measure" x1="140" y1="65" x2="140" y2="84"/>
+  <line class="dg-measure" x1="140" y1="86" x2="140" y2="147"/>
+  <line class="dg-measure" x1="140" y1="150" x2="140" y2="168"/>
+  <text class="dg-label" x="150" y="78">IVSd</text>
+  <text class="dg-label" x="150" y="120">LVIDd</text>
+  <text class="dg-label" x="150" y="164">PWd</text>
+  <text class="dg-label" x="236" y="121">Ao</text>
+  <text class="dg-label" x="76" y="121">LV</text>
+</svg>

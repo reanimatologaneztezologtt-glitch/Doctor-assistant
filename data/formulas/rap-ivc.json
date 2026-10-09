@@ -1,0 +1,98 @@
+{
+  "id": "rap-ivc",
+  "group": "pasp",
+  "sourceIds": [
+    "rudski2010",
+    "ase2015"
+  ],
+  "formula": "IVC ≤ 21 mm and collapse > 50% → 3 mmHg;  IVC > 21 mm and collapse < 50% → 15 mmHg;  otherwise → 8 mmHg",
+  "inputs": [
+    {
+      "id": "ivc",
+      "unit": "mm",
+      "min": 3,
+      "max": 50,
+      "step": 1
+    },
+    {
+      "id": "ivc_collapse",
+      "unit": "pct",
+      "min": 0,
+      "max": 100,
+      "step": 1
+    }
+  ],
+  "outputs": [
+    {
+      "id": "rap",
+      "expr": "if(ivc<=21, if(ivc_collapse>50, 3, 8), if(ivc_collapse<50, 15, 8))",
+      "unit": "mmhg",
+      "decimals": 0
+    }
+  ],
+  "norms": [
+    {
+      "output": "ivc",
+      "high": 21,
+      "sourceId": "rudski2010"
+    },
+    {
+      "output": "ivc_collapse",
+      "low": 50,
+      "lowExclusive": true,
+      "sourceId": "rudski2010"
+    }
+  ],
+  "tests": [
+    {
+      "inputs": {
+        "ivc": 18,
+        "ivc_collapse": 60
+      },
+      "expected": {
+        "rap": 3
+      },
+      "tolerance": 0
+    },
+    {
+      "inputs": {
+        "ivc": 18,
+        "ivc_collapse": 40
+      },
+      "expected": {
+        "rap": 8
+      },
+      "tolerance": 0
+    },
+    {
+      "inputs": {
+        "ivc": 25,
+        "ivc_collapse": 30
+      },
+      "expected": {
+        "rap": 15
+      },
+      "tolerance": 0
+    },
+    {
+      "inputs": {
+        "ivc": 25,
+        "ivc_collapse": 60
+      },
+      "expected": {
+        "rap": 8
+      },
+      "tolerance": 0
+    },
+    {
+      "inputs": {
+        "ivc": 25,
+        "ivc_collapse": 50
+      },
+      "expected": {
+        "rap": 8
+      },
+      "tolerance": 0
+    }
+  ]
+}

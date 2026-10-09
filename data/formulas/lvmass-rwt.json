@@ -1,0 +1,35 @@
+{
+  "id": "lvmass-rwt",
+  "group": "mass",
+  "sourceIds": ["ase2015", "devereux1986", "mosteller1987"],
+  "formula": "LV mass = 0.8 × 1.04 × [(IVSd + LVIDd + PWd)³ − LVIDd³] + 0.6 g  (cm);  LVMi = LV mass / BSA;  BSA = √(height × weight / 3600);  RWT = 2 × PWd / LVIDd",
+  "inputs": [
+    { "id": "ivsd", "unit": "mm", "min": 3, "max": 40, "step": 0.1 },
+    { "id": "lvedd", "unit": "mm", "min": 20, "max": 100, "step": 0.1 },
+    { "id": "pwd", "unit": "mm", "min": 3, "max": 40, "step": 0.1 },
+    { "id": "height", "unit": "cm_body", "min": 50, "max": 250, "step": 1 },
+    { "id": "weight", "unit": "kg", "min": 2, "max": 300, "step": 0.1 },
+    { "id": "sex", "type": "select", "options": [ { "value": 1, "labelKey": "sex.male" }, { "value": 2, "labelKey": "sex.female" } ] }
+  ],
+  "outputs": [
+    { "id": "bsa", "expr": "sqrt(height*weight/3600)", "unit": "m2", "decimals": 2 },
+    { "id": "lvmass", "expr": "0.8*1.04*(((ivsd+lvedd+pwd)/10)^3-(lvedd/10)^3)+0.6", "unit": "g", "decimals": 0 },
+    { "id": "lvmi", "expr": "lvmass/bsa", "unit": "gm2", "decimals": 0 },
+    { "id": "rwt", "expr": "2*pwd/lvedd", "unit": "ratio", "decimals": 2 },
+    { "id": "geometry", "expr": "if(lvmi > if(sex==1,115,95), if(rwt>0.42,4,3), if(rwt>0.42,2,1))", "type": "category",
+      "categories": { "1": "geometry.normal", "2": "geometry.concentricRemodeling", "3": "geometry.eccentricHypertrophy", "4": "geometry.concentricHypertrophy" } }
+  ],
+  "norms": [
+    { "output": "lvmass", "when": { "sex": 1 }, "low": 88, "high": 224, "sourceId": "ase2015" },
+    { "output": "lvmass", "when": { "sex": 2 }, "low": 67, "high": 162, "sourceId": "ase2015" },
+    { "output": "lvmi", "when": { "sex": 1 }, "low": 49, "high": 115, "sourceId": "ase2015" },
+    { "output": "lvmi", "when": { "sex": 2 }, "low": 43, "high": 95, "sourceId": "ase2015" },
+    { "output": "rwt", "high": 0.42, "sourceId": "ase2015" }
+  ],
+  "tests": [
+    { "inputs": { "ivsd": 10, "lvedd": 50, "pwd": 10, "height": 175, "weight": 75, "sex": 1 },
+      "expected": { "bsa": 1.9094, "lvmass": 181.976, "lvmi": 95.305, "rwt": 0.4, "geometry": 1 }, "tolerance": 0.01 },
+    { "inputs": { "ivsd": 12, "lvedd": 46, "pwd": 12, "height": 160, "weight": 70, "sex": 2 },
+      "expected": { "bsa": 1.7638, "lvmass": 204.992, "lvmi": 116.220, "rwt": 0.5217, "geometry": 4 }, "tolerance": 0.01 }
+  ]
+}

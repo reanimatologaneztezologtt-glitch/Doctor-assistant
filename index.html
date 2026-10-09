@@ -30,6 +30,7 @@
         <fieldset class="segmented" id="lang-switch">
           <legend class="visually-hidden" data-i18n="ui.language"></legend>
         </fieldset>
+        <div id="user-badge"></div>
         <fieldset class="segmented" id="theme-switch">
           <legend class="visually-hidden" data-i18n="ui.theme"></legend>
           <button type="button" data-theme-value="light" data-i18n="ui.themeLight"></button>
@@ -47,6 +48,8 @@
   <div class="banners">
     <p class="banner" id="test-mode-banner" role="status" data-i18n="ui.testMode" hidden></p>
     <p class="banner" id="offline-banner" role="status" data-i18n="ui.offline" hidden></p>
+    <p class="banner" id="demo-banner" role="status" data-i18n="ui.demoMode" hidden></p>
+    <p class="banner banner--error" id="calc-test-banner" role="alert" data-i18n="ui.calcTestsFailed" hidden></p>
   </div>
 
   <main id="main" tabindex="-1"></main>

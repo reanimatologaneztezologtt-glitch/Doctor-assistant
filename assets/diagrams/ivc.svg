@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 150" class="dg">
+  <!-- Schematic subcostal view of the inferior vena cava. -->
+  <ellipse class="dg-ven" cx="270" cy="70" rx="34" ry="30"/>
+  <path class="dg-ven" d="M30 52 L240 56 L240 86 L30 92 Z"/>
+  <line class="dg-measure" x1="190" y1="56" x2="190" y2="87"/>
+  <text class="dg-label" x="262" y="74">RA</text>
+  <text class="dg-label" x="60" y="76">IVC</text>
+  <text class="dg-label" x="170" y="112">≤ 21 mm?</text>
+</svg>

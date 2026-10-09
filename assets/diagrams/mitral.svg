@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" class="dg">
+  <!-- Schematic pulsed-wave Doppler of mitral inflow: E and A waves. -->
+  <line class="dg-axis" x1="20" y1="30" x2="300" y2="30"/>
+  <path class="dg-art-fill" d="M40 30 L70 120 L100 30 Z"/>
+  <path class="dg-art-fill" d="M130 30 L150 90 L170 30 Z"/>
+  <path class="dg-art-fill" d="M200 30 L230 120 L260 30 Z"/>
+  <line class="dg-measure" x1="70" y1="30" x2="70" y2="120"/>
+  <line class="dg-measure" x1="150" y1="30" x2="150" y2="90"/>
+  <text class="dg-label" x="76" y="140">E</text>
+  <text class="dg-label" x="156" y="110">A</text>
+  <text class="dg-label" x="24" y="22">0</text>
+</svg>

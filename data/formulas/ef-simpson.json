@@ -1,0 +1,26 @@
+{
+  "id": "ef-simpson",
+  "group": "ef",
+  "sourceIds": ["ase2015"],
+  "formula": "EF = (EDV − ESV) / EDV × 100;  SV = EDV − ESV  (EDV, ESV: biplane method of disks)",
+  "inputs": [
+    { "id": "lvedv", "unit": "ml", "min": 10, "max": 600, "step": 1 },
+    { "id": "lvesv", "unit": "ml", "min": 5, "max": 500, "step": 1 },
+    { "id": "sex", "type": "select", "options": [ { "value": 1, "labelKey": "sex.male" }, { "value": 2, "labelKey": "sex.female" } ] }
+  ],
+  "outputs": [
+    { "id": "sv", "expr": "lvedv-lvesv", "unit": "ml", "decimals": 0 },
+    { "id": "ef", "expr": "(lvedv-lvesv)/lvedv*100", "unit": "pct", "decimals": 0, "paramId": "lvef" }
+  ],
+  "norms": [
+    { "output": "ef", "when": { "sex": 1 }, "low": 52, "high": 72, "sourceId": "ase2015" },
+    { "output": "ef", "when": { "sex": 2 }, "low": 54, "high": 74, "sourceId": "ase2015" },
+    { "output": "lvedv", "when": { "sex": 1 }, "low": 62, "high": 150, "sourceId": "ase2015" },
+    { "output": "lvedv", "when": { "sex": 2 }, "low": 46, "high": 106, "sourceId": "ase2015" },
+    { "output": "lvesv", "when": { "sex": 1 }, "low": 21, "high": 61, "sourceId": "ase2015" },
+    { "output": "lvesv", "when": { "sex": 2 }, "low": 14, "high": 42, "sourceId": "ase2015" }
+  ],
+  "tests": [
+    { "inputs": { "lvedv": 120, "lvesv": 50, "sex": 1 }, "expected": { "sv": 70, "ef": 58.333 }, "tolerance": 0.01 }
+  ]
+}

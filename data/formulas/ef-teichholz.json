@@ -1,0 +1,23 @@
+{
+  "id": "ef-teichholz",
+  "group": "ef",
+  "sourceIds": ["teichholz1976", "ase2015"],
+  "formula": "V = 7 / (2.4 + D) × D³  (D, cm);  EF = (EDV − ESV) / EDV × 100",
+  "inputs": [
+    { "id": "lvedd", "unit": "mm", "min": 20, "max": 100, "step": 0.1 },
+    { "id": "lvesd", "unit": "mm", "min": 10, "max": 90, "step": 0.1 },
+    { "id": "sex", "type": "select", "options": [ { "value": 1, "labelKey": "sex.male" }, { "value": 2, "labelKey": "sex.female" } ] }
+  ],
+  "outputs": [
+    { "id": "edv", "expr": "7/(2.4+lvedd/10)*(lvedd/10)^3", "unit": "ml", "decimals": 0 },
+    { "id": "esv", "expr": "7/(2.4+lvesd/10)*(lvesd/10)^3", "unit": "ml", "decimals": 0 },
+    { "id": "ef", "expr": "(edv-esv)/edv*100", "unit": "pct", "decimals": 0, "paramId": "lvef" }
+  ],
+  "norms": [
+    { "output": "ef", "when": { "sex": 1 }, "low": 52, "high": 72, "sourceId": "ase2015" },
+    { "output": "ef", "when": { "sex": 2 }, "low": 54, "high": 74, "sourceId": "ase2015" }
+  ],
+  "tests": [
+    { "inputs": { "lvedd": 50, "lvesd": 35, "sex": 1 }, "expected": { "edv": 118.243, "esv": 50.869, "ef": 56.980 }, "tolerance": 0.01 }
+  ]
+}

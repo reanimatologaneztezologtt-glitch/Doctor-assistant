@@ -5,10 +5,14 @@
   "type": "module",
   "description": "Educational echocardiography platform (stage 1)",
   "scripts": {
-    "start": "node scripts/dev-server.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "start": "node server/index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "grant-admin": "node server/cli.mjs grant-admin"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.132.1"
   }
 }

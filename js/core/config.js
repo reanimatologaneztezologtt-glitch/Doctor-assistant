@@ -20,9 +20,14 @@ export function validateConfig(cfg) {
 }
 
 // In test mode every user is on the free plan regardless of stored plan.
-export function effectivePlan(user, cfg) {
+// A cancelled subscription stays active until the end of its paid period.
+export function effectivePlan(user, cfg, now = Date.now()) {
   if (cfg.testMode) return 'free';
-  return user && user.plan === 'subscriber' ? 'subscriber' : 'free';
+  const sub = user && user.subscription;
+  if (!sub || !sub.planId) return 'free';
+  if (sub.status !== 'active' && sub.status !== 'cancelled') return 'free';
+  if (sub.periodEnd && now >= Date.parse(sub.periodEnd)) return 'free';
+  return sub.planId;
 }
 
 export function paymentsActive(cfg) {

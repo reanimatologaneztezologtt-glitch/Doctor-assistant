@@ -1,0 +1,16 @@
+{
+  "specialties": [
+    { "id": "cardiology" },
+    { "id": "functional_diagnostics" },
+    { "id": "anesthesiology_icu" },
+    { "id": "internal_medicine" },
+    { "id": "pediatric_cardiology" },
+    { "id": "cardiac_surgery" },
+    { "id": "emergency_medicine" }
+  ],
+  "studyDirections": [
+    { "id": "general_medicine" },
+    { "id": "pediatrics" },
+    { "id": "higher_nursing" }
+  ]
+}

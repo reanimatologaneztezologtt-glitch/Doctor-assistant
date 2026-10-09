@@ -1,14 +1,20 @@
 import { createTranslator, pickLanguage } from './core/i18n.js';
 import { validateConfig } from './core/config.js';
 import { readPref, writePref } from './core/storage.js';
+import { runReferenceTests } from './core/calc.js';
+import { createFormatter } from './ui/format.js';
+import { el, icon } from './ui/dom.js';
+import { createBackend } from './api/index.js';
+import { VIEWS } from './views/index.js';
 
 const state = {
-  config: null,
-  nav: [],
+  data: null,
   lang: null,
-  dict: null,
-  fallbackDict: null,
-  t: (key) => key,
+  t: (k) => k,
+  fmt: null,
+  api: null,
+  user: null,
+  assistantDraft: '',
 };
 
 async function loadJson(path) {
@@ -17,92 +23,72 @@ async function loadJson(path) {
   return res.json();
 }
 
-function el(tag, attrs = {}, children = []) {
-  const node = document.createElement(tag);
-  for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'text') node.textContent = v;
-    else node.setAttribute(k, v);
-  }
-  for (const child of children) node.append(child);
-  return node;
+async function loadData() {
+  const [config, navigation, parameters, sources, specialties, plans, providers, rules, formulaIndex, demoCase] = await Promise.all([
+    'config/app.json', 'data/navigation.json', 'data/parameters.json', 'data/sources.json',
+    'data/specialties.json', 'data/plans.json', 'data/providers.json', 'data/rules.json',
+    'data/formulas/index.json', 'data/cases/demo-1.json',
+  ].map(loadJson));
+  const errors = validateConfig(config);
+  if (errors.length) throw new Error(`config/app.json: ${errors.join('; ')}`);
+  const formulas = await Promise.all(formulaIndex.calculators.map((id) => loadJson(`data/formulas/${id}.json`)));
+  const dicts = Object.fromEntries(await Promise.all(
+    config.supportedLanguages.map(async (l) => [l, await loadJson(`data/i18n/${l}.json`)]),
+  ));
+  return { config, navigation, parameters, sources, specialties, plans, providers, rules, formulas, demoCase, dicts };
 }
 
-function icon(name, extraClass = '') {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('class', `icon ${extraClass}`.trim());
-  svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('focusable', 'false');
-  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-  use.setAttribute('href', `assets/icons/sprite.svg#${name}`);
-  svg.append(use);
-  return svg;
+// ---- measurements (browser only, spec section 8) --------------------------
+const MEASURE_KEY = 'da.measurements';
+export function readMeasurements() {
+  try { return JSON.parse(readPref(MEASURE_KEY) || '{}'); } catch { return {}; }
+}
+export function writeMeasurements(values) {
+  writePref(MEASURE_KEY, JSON.stringify(values));
 }
 
-// ---- i18n -----------------------------------------------------------------
-
-async function setLanguage(lang) {
-  const { config } = state;
-  const code = pickLanguage(lang, config.supportedLanguages, config.defaultLanguage);
-  state.dict = await loadDict(code);
-  if (!state.fallbackDict) {
-    state.fallbackDict = await loadDict(config.defaultLanguage);
-  }
-  state.lang = code;
-  state.t = createTranslator(state.dict, state.fallbackDict, (key) =>
-    console.warn(`i18n: missing key "${key}" for "${code}"`));
-  writePref('da.lang', code);
-
+// ---- language -------------------------------------------------------------
+function setLanguage(code) {
+  const { config, dicts } = state.data;
+  const lang = pickLanguage(code, config.supportedLanguages, config.defaultLanguage);
+  state.lang = lang;
+  state.t = createTranslator(dicts[lang], dicts[config.defaultLanguage], (key) =>
+    console.warn(`i18n: missing key "${key}" for "${lang}"`));
+  state.fmt = createFormatter(state.t, dicts[lang].meta.htmlLang);
+  writePref('da.lang', lang);
   document.documentElement.lang = state.t('meta.htmlLang');
   document.title = `${state.t('app.title')} — ${state.t('app.tagline')}`;
   applyStaticTranslations();
-  await renderLanguageSwitch();
-  renderNav();
-  renderRoute();
+  renderLanguageSwitch();
+  renderChrome();
 }
 
 function applyStaticTranslations() {
-  for (const node of document.querySelectorAll('[data-i18n]')) {
-    node.textContent = state.t(node.dataset.i18n);
-  }
+  for (const node of document.querySelectorAll('[data-i18n]')) node.textContent = state.t(node.dataset.i18n);
   for (const node of document.querySelectorAll('[data-i18n-aria-label]')) {
     node.setAttribute('aria-label', state.t(node.dataset.i18nAriaLabel));
   }
 }
 
-const dictCache = new Map();
-
-async function loadDict(code) {
-  if (!dictCache.has(code)) dictCache.set(code, loadJson(`data/i18n/${code}.json`));
-  return dictCache.get(code);
-}
-
-async function renderLanguageSwitch() {
+function renderLanguageSwitch() {
   const box = document.getElementById('lang-switch');
-  // Each language names itself, so labels come from that language's file.
-  const dicts = await Promise.all(state.config.supportedLanguages.map(loadDict));
-  const buttons = state.config.supportedLanguages.map((code, i) => {
-    const btn = el('button', {
-      type: 'button',
-      lang: dicts[i].meta.htmlLang,
-      'aria-pressed': String(code === state.lang),
-      'aria-label': dicts[i].meta.languageName,
-      text: dicts[i].meta.languageShort,
+  const buttons = state.data.config.supportedLanguages.map((code) => {
+    const meta = state.data.dicts[code].meta;
+    return el('button', {
+      type: 'button', lang: meta.htmlLang, 'aria-pressed': String(code === state.lang),
+      'aria-label': meta.languageName, text: meta.languageShort, onclick: () => setLanguage(code),
     });
-    btn.addEventListener('click', () => setLanguage(code));
-    return btn;
   });
   box.querySelectorAll('button').forEach((b) => b.remove());
   box.append(...buttons);
 }
 
 // ---- theme ----------------------------------------------------------------
-
 function initThemeSwitch() {
   const box = document.getElementById('theme-switch');
   const sync = () => {
     const choice = document.documentElement.getAttribute('data-theme-choice');
-    box.querySelectorAll('button').forEach((b) =>
-      b.setAttribute('aria-pressed', String(b.dataset.themeValue === choice)));
+    box.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeValue === choice)));
   };
   box.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-theme-value]');
@@ -114,100 +100,122 @@ function initThemeSwitch() {
   sync();
 }
 
-// ---- navigation / routing -------------------------------------------------
-
-function currentRouteId() {
+// ---- routing ----------------------------------------------------------------
+function currentRoute() {
   const id = location.hash.replace(/^#\/?/, '') || 'home';
   return id;
 }
 
+export function navigate(id) {
+  if (currentRoute() === id) renderChrome({ focus: true });
+  else location.hash = id;
+}
+
+function visibleNav() {
+  return state.data.navigation.items.filter((item) => item.requires !== 'admin' || (state.user && state.user.isAdmin));
+}
+
 function renderNav() {
   const list = document.getElementById('nav-list');
-  const active = currentRouteId();
-  list.replaceChildren(...state.nav.map((item) => {
+  const active = currentRoute();
+  list.replaceChildren(...visibleNav().map((item) => {
     const link = el('a', { href: `#${item.id}` }, [icon(item.icon), el('span', { text: state.t(item.labelKey) })]);
     if (item.id === active) link.setAttribute('aria-current', 'page');
     return el('li', {}, [link]);
   }));
 }
 
+function renderUserBadge() {
+  const box = document.getElementById('user-badge');
+  box.replaceChildren(state.user
+    ? el('a', { href: '#account', class: 'user-badge' }, [icon('user'), el('span', { text: state.user.fullName })])
+    : el('a', { href: '#account', class: 'user-badge', text: state.t('account.signIn') }));
+}
+
 function disclaimer() {
   return el('p', { class: 'disclaimer', role: 'note', text: state.t('disclaimer.text') });
 }
 
-function renderHome() {
-  const { t } = state;
-  return [
-    el('h1', { text: t('home.heading') }),
-    el('div', { class: 'card' }, [
-      el('p', { text: t('home.intro') }),
-      el('p', { text: t('home.notDiagnostic') }),
-    ]),
-    el('p', { class: 'text-muted', text: t('home.privacy') }),
-  ];
-}
-
-function renderPlaceholder(item) {
-  const { t } = state;
-  return [
-    el('h1', { text: t(item.labelKey) }),
-    el('div', { class: 'card' }, [
-      el('p', { text: t(item.bodyKey) }),
-      el('p', { class: 'text-muted', text: t('ui.comingSoon', { step: item.readyInStep }) }),
-    ]),
-  ];
-}
-
-function renderRoute({ focus = false } = {}) {
+let renderToken = 0;
+async function renderRoute({ focus = false } = {}) {
+  const token = ++renderToken;
   const main = document.getElementById('main');
-  const item = state.nav.find((n) => n.id === currentRouteId());
+  const id = currentRoute();
+  const item = state.data.navigation.items.find((n) => n.id === id);
+  const view = item && VIEWS[id];
   let content;
-  if (!item) content = [el('h1', { text: state.t('ui.notFound') })];
-  else if (item.id === 'home') content = renderHome();
-  else content = renderPlaceholder(item);
+  try {
+    content = view ? await view(ctx()) : [el('h1', { text: state.t('ui.notFound') })];
+  } catch (err) {
+    console.error(err);
+    content = [el('h1', { text: state.t('ui.loadError') })];
+  }
+  if (token !== renderToken) return; // a newer render started
   // Every section ends with the educational disclaimer (spec section 12).
-  main.replaceChildren(...content, disclaimer());
+  main.replaceChildren(...[].concat(content), disclaimer());
   if (focus) main.focus();
 }
 
-// ---- status banners -------------------------------------------------------
+function renderChrome(opts) {
+  renderNav();
+  renderUserBadge();
+  return renderRoute(opts);
+}
 
+async function refreshUser() {
+  state.user = await state.api.me().catch(() => null);
+}
+
+function ctx() {
+  return {
+    ...state,
+    navigate,
+    rerender: () => renderChrome(),
+    refreshUser: async () => { await refreshUser(); return renderChrome(); },
+    readMeasurements,
+    writeMeasurements,
+    setAssistantDraft: (text) => { state.assistantDraft = text; },
+  };
+}
+
+// ---- banners ----------------------------------------------------------------
 function initBanners() {
-  document.getElementById('test-mode-banner').hidden = !state.config.testMode;
+  document.getElementById('test-mode-banner').hidden = !state.data.config.testMode;
+  document.getElementById('demo-banner').hidden = state.api.mode !== 'demo';
   const offline = document.getElementById('offline-banner');
   const sync = () => { offline.hidden = navigator.onLine; };
   window.addEventListener('online', sync);
   window.addEventListener('offline', sync);
   sync();
+  // Calculator reference tests run on every load; a failure is shown loudly.
+  const failures = state.data.formulas.flatMap(runReferenceTests).filter((r) => !r.pass);
+  state.calcTestFailures = failures;
+  if (failures.length) {
+    console.error('Calculator reference tests failed', failures);
+    const banner = document.getElementById('calc-test-banner');
+    banner.hidden = false;
+  }
 }
 
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
-  navigator.serviceWorker.register('sw.js').catch((err) =>
-    console.warn('Service worker registration failed:', err));
+  navigator.serviceWorker.register('sw.js').catch(() => { /* not available (e.g. sandboxed preview) */ });
 }
-
-// ---- boot -----------------------------------------------------------------
 
 async function boot() {
   try {
-    state.config = await loadJson('config/app.json');
-    const errors = validateConfig(state.config);
-    if (errors.length) throw new Error(`config/app.json: ${errors.join('; ')}`);
-    state.nav = (await loadJson('data/navigation.json')).items;
-
+    state.data = await loadData();
+    state.api = await createBackend(state.data);
+    await refreshUser();
     initThemeSwitch();
     initBanners();
-    window.addEventListener('hashchange', () => { renderNav(); renderRoute({ focus: true }); });
-
-    const preferred = readPref('da.lang') || state.config.defaultLanguage;
-    await setLanguage(preferred);
+    window.addEventListener('hashchange', () => renderChrome({ focus: true }));
+    setLanguage(readPref('da.lang') || state.data.config.defaultLanguage);
     registerServiceWorker();
   } catch (err) {
     console.error(err);
-    const main = document.getElementById('main');
-    // No translations may be available here, so show all three languages.
-    main.textContent = 'Error / Хатолик / Ошибка: ' + err.message;
+    // Translations may be unavailable here, so the message is in all three languages.
+    document.getElementById('main').textContent = 'Error / Хатолик / Ошибка: ' + err.message;
   }
 }
 

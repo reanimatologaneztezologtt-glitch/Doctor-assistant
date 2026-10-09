@@ -13,9 +13,12 @@
     "home": "Home",
     "echo": "Echo parameters",
     "calculators": "Calculators",
+    "conclusion": "Conclusion (draft)",
     "assistant": "AI assistant",
+    "questions": "Questions to doctors",
     "plans": "Plans",
-    "account": "Account"
+    "account": "Account",
+    "admin": "Admin"
   },
   "ui": {
     "skipToContent": "Skip to main content",
@@ -26,42 +29,788 @@
     "themeSystem": "System",
     "offline": "Offline: using cached content.",
     "testMode": "Test mode: all users are on the free plan, payments are disabled.",
-    "comingSoon": "This section will be added in step {step} of the work plan.",
+    "demoMode": "Demo mode: no server is connected. Accounts and logs are stored in this browser only.",
+    "calcTestsFailed": "A calculator reference test failed. Do not use the results.",
     "notFound": "Page not found.",
-    "loadError": "Could not load data. Please reload the page."
-  },
-  "home": {
-    "heading": "Welcome",
-    "intro": "The platform is intended for physicians, residents and medical students. It presents echocardiography parameters, reference values and calculators with their sources.",
-    "notDiagnostic": "This site does not provide individual diagnoses or treatment decisions.",
-    "privacy": "Patient name, ID and date of birth are neither requested nor stored. Measurements you enter stay in your browser only."
-  },
-  "sections": {
-    "echo": "Chambers, walls, valves, hemodynamics, right heart, pericardium, aorta and pulmonary artery (in ASE/EACVI order).",
-    "calculators": "EF (Teichholz, Simpson), LV mass index (Devereux) and RWT, E/A and E/e', PASP.",
-    "assistant": "Educational assistant that explains formulas and parameters. It does not diagnose.",
-    "plans": "Plans and subscription (currently in test mode).",
-    "account": "Registration, roles and physician license verification."
+    "loadError": "Could not load data. Please reload the page.",
+    "source": "Source",
+    "sourceNotFound": "Source not found",
+    "choose": "— choose —",
+    "close": "Close"
   },
   "disclaimer": {
     "text": "For educational purposes. Clinical decisions are made by a qualified physician."
   },
-  "terms": {
-    "ef": {
-      "short": "EF",
-      "full": "Left ventricular ejection fraction"
+  "home": {
+    "heading": "Welcome",
+    "intro": "The platform is intended for physicians, residents and medical students. It presents echocardiography parameters, reference values and calculators with their sources.",
+    "tile": {
+      "echo": "Parameters, reference values and \"?\" explanations",
+      "calculators": "EF, LV mass index and RWT, E/A and E/e′, PASP",
+      "conclusion": "Rule-based draft and physician approval",
+      "assistant": "Explains formulas and parameters"
+    },
+    "rulesHeading": "Important",
+    "notDiagnostic": "This site does not provide individual diagnoses or treatment decisions.",
+    "privacy": "Patient name, ID and date of birth are neither requested nor stored. Measurements you enter stay in your browser only.",
+    "sourcesNote": "Every reference value and formula cites its source (ASE/EACVI 2015, ASE/EACVI 2016, ESC and others).",
+    "modeDemo": "Demo mode is active: ready-made accounts are available to try registration and approval (Account section).",
+    "modeServer": "Server connected: accounts and logs are stored on the server."
+  },
+  "echo": {
+    "intro": "Sections follow the ASE/EACVI order. Enter a value: the reference range is shown by sex. The \"?\" button next to each parameter opens an explanation.",
+    "privacy": "Measurements are stored in this browser only and are not sent to the server.",
+    "loadDemo": "Load teaching example (synthetic)",
+    "clear": "Clear",
+    "toConclusion": "Go to draft conclusion",
+    "calculated": "calculated",
+    "calculatedHint": "Calculated automatically from other parameters"
+  },
+  "echoSections": {
+    "general": "General data (anonymous)",
+    "chambers": "Chambers",
+    "walls": "Walls",
+    "valves": "Valves and diastolic inflow",
+    "hemodynamics": "Hemodynamics",
+    "right_heart": "Right heart",
+    "pericardium": "Pericardium",
+    "aorta_pa": "Aorta and pulmonary artery"
+  },
+  "norm": {
+    "label": "reference",
+    "men": "men",
+    "women": "women",
+    "none": "No single reference value — see the \"?\" explanation"
+  },
+  "status": {
+    "low": "Below reference",
+    "normal": "Within reference",
+    "high": "Above reference"
+  },
+  "sex": {
+    "male": "Male",
+    "female": "Female"
+  },
+  "param": {
+    "explain": "Explanation",
+    "definition": "Definition",
+    "method": "How it is measured",
+    "norm": "Reference values",
+    "significance": "Clinical significance",
+    "schematic": "schematic drawing, not a real image",
+    "userImage": "Your own image",
+    "userImageLabel": "Choose an image",
+    "userImageHint": "The image is shown in this window only. The site neither stores nor sends it. Do not use images that contain patient data.",
+    "userImageAlt": "Image chosen by the user"
+  },
+  "diagrams": {
+    "plax": "Parasternal long-axis view",
+    "a4c": "Apical four-chamber view",
+    "mitral": "Pulsed-wave Doppler of mitral inflow",
+    "tdi": "Tissue Doppler of the annulus",
+    "cw": "Continuous-wave Doppler",
+    "mmode": "M-mode of the tricuspid annulus",
+    "ivc": "Inferior vena cava, subcostal view",
+    "peri": "Pericardial effusion",
+    "psax": "Parasternal short axis at the great vessels"
+  },
+  "params": {
+    "sex": {
+      "name": "Sex",
+      "abbr": "Sex",
+      "def": "Many reference values differ between men and women.",
+      "method": "Selected from the list.",
+      "significance": "Used to select the sex-specific reference range.",
+      "normNote": "No reference value: this parameter selects the reference range."
+    },
+    "height": {
+      "name": "Height",
+      "abbr": "Ht",
+      "def": "Height (cm) used to calculate body surface area.",
+      "method": "Entered in centimeters.",
+      "significance": "Needed to index volumes and mass to body surface area.",
+      "normNote": "No reference value is given."
+    },
+    "weight": {
+      "name": "Body weight",
+      "abbr": "Wt",
+      "def": "Body weight (kg) used to calculate body surface area.",
+      "method": "Entered in kilograms.",
+      "significance": "Needed to index volumes and mass to body surface area.",
+      "normNote": "No reference value is given."
+    },
+    "bsa": {
+      "name": "Body surface area",
+      "abbr": "BSA",
+      "def": "Mosteller formula: BSA = √(height, cm × weight, kg / 3600).",
+      "method": "Calculated automatically from height and weight.",
+      "significance": "Denominator for volume and mass indices.",
+      "normNote": "No reference value is given."
+    },
+    "lvedd": {
+      "name": "LV end-diastolic diameter",
+      "abbr": "LVIDd",
+      "def": "Internal dimension of the LV cavity at end-diastole.",
+      "method": "Parasternal long-axis view, perpendicular to the LV long axis, at or just below the mitral leaflet tips, at end-diastole.",
+      "significance": "An increase indicates LV dilation. Linear dimensions are reliable only when LV shape is preserved."
+    },
+    "lvesd": {
+      "name": "LV end-systolic diameter",
+      "abbr": "LVIDs",
+      "def": "Internal dimension of the LV cavity at end-systole.",
+      "method": "Same view and level as LVIDd, at end-systole.",
+      "significance": "An increase may reflect reduced systolic function or dilation."
+    },
+    "lvedv": {
+      "name": "LV end-diastolic volume",
+      "abbr": "LVEDV",
+      "def": "LV volume at end-diastole.",
+      "method": "Biplane method of disks (modified Simpson): the endocardial border is traced in apical four- and two-chamber views; papillary muscles are included in the cavity.",
+      "significance": "An increase indicates LV dilation; basis for EF calculation."
+    },
+    "lvesv": {
+      "name": "LV end-systolic volume",
+      "abbr": "LVESV",
+      "def": "LV volume at end-systole.",
+      "method": "Biplane method of disks, as for LVEDV, at end-systole.",
+      "significance": "An increase may indicate systolic dysfunction."
+    },
+    "lvedvi": {
+      "name": "LV end-diastolic volume index",
+      "abbr": "LVEDVi",
+      "def": "LVEDV divided by body surface area.",
+      "method": "Calculated automatically from LVEDV and BSA.",
+      "significance": "Helps assess dilation independent of body size."
+    },
+    "lvesvi": {
+      "name": "LV end-systolic volume index",
+      "abbr": "LVESVi",
+      "def": "LVESV divided by body surface area.",
+      "method": "Calculated automatically from LVESV and BSA.",
+      "significance": "An increase may indicate systolic dysfunction."
+    },
+    "lvef": {
+      "name": "LV ejection fraction",
+      "abbr": "LVEF",
+      "def": "EF = (EDV − ESV) / EDV × 100%.",
+      "method": "ASE/EACVI 2015 recommends the biplane method of disks (Simpson). Calculated automatically when LVEDV and LVESV are entered.",
+      "significance": "Main index of global LV systolic function."
+    },
+    "lav": {
+      "name": "Left atrial volume",
+      "abbr": "LAV",
+      "def": "Maximal LA volume at LV end-systole.",
+      "method": "Method of disks or area-length method in apical four- and two-chamber views.",
+      "significance": "Compared with the reference range only after indexing (LAVi).",
+      "normNote": "No single reference value for absolute volume; LAVi is used."
+    },
+    "lavi": {
+      "name": "Left atrial volume index",
+      "abbr": "LAVi",
+      "def": "LA volume divided by body surface area.",
+      "method": "Calculated from LAV and BSA or entered directly.",
+      "significance": "A value above 34 mL/m² indicates LA enlargement; used in the diastolic function algorithm (ASE/EACVI 2016)."
+    },
+    "ivsd": {
+      "name": "Interventricular septal thickness in diastole",
+      "abbr": "IVSd",
+      "def": "Septal thickness at end-diastole.",
+      "method": "Parasternal long-axis view at the LVIDd level; RV trabeculations are excluded.",
+      "significance": "Thickening is seen in hypertrophy or remodeling; used for LV mass."
+    },
+    "pwd": {
+      "name": "LV posterior wall thickness in diastole",
+      "abbr": "PWd",
+      "def": "Inferolateral (posterior) wall thickness at end-diastole.",
+      "method": "Measured at the LVIDd level; pericardium and chordae are excluded.",
+      "significance": "Used in RWT = 2 × PWd / LVIDd and in LV mass."
+    },
+    "lvmass": {
+      "name": "LV mass",
+      "abbr": "LVM",
+      "def": "Linear method (ASE/EACVI 2015): 0.8 × 1.04 × [(IVSd + LVIDd + PWd)³ − LVIDd³] + 0.6 g, dimensions in cm.",
+      "method": "Calculated automatically from IVSd, LVIDd and PWd.",
+      "significance": "Used after indexing (LVMi) to assess hypertrophy."
     },
     "lvmi": {
-      "short": "LVMi",
-      "full": "Left ventricular mass index"
+      "name": "LV mass index",
+      "abbr": "LVMi",
+      "def": "LV mass divided by body surface area.",
+      "method": "Calculated from LV mass and BSA or entered directly.",
+      "significance": "Together with RWT defines LV geometry: normal, concentric remodeling, concentric or eccentric hypertrophy."
     },
     "rwt": {
-      "short": "RWT",
-      "full": "Relative wall thickness"
+      "name": "Relative wall thickness",
+      "abbr": "RWT",
+      "def": "RWT = 2 × PWd / LVIDd.",
+      "method": "Calculated automatically from PWd and LVIDd.",
+      "significance": "A value above 0.42 indicates concentric geometry (ASE/EACVI 2015)."
+    },
+    "e_vel": {
+      "name": "Mitral E velocity",
+      "abbr": "E",
+      "def": "Peak early diastolic mitral inflow velocity.",
+      "method": "Pulsed-wave Doppler in the apical four-chamber view, sample volume between the mitral leaflet tips.",
+      "significance": "Used to calculate E/A and E/e′ (ASE/EACVI 2016).",
+      "normNote": "No single reference value: age-dependent. With reduced EF the algorithm cut-off is E ≤ 50 cm/s (ASE/EACVI 2016)."
+    },
+    "a_vel": {
+      "name": "Mitral A velocity",
+      "abbr": "A",
+      "def": "Peak mitral inflow velocity during atrial contraction.",
+      "method": "Measured on the same Doppler recording as E.",
+      "significance": "Needed for E/A. The A wave is absent in atrial fibrillation.",
+      "normNote": "No single reference value: age-dependent."
+    },
+    "ea": {
+      "name": "Mitral E/A ratio",
+      "abbr": "E/A",
+      "def": "Ratio of E velocity to A velocity.",
+      "method": "Calculated from E and A or entered directly.",
+      "significance": "With reduced EF: E/A ≤ 0.8 with E ≤ 50 cm/s means normal LA pressure (grade I); E/A ≥ 2 means elevated pressure (grade III) (ASE/EACVI 2016).",
+      "normNote": "No single reference value: age-dependent; algorithm cut-offs 0.8 and 2 (ASE/EACVI 2016)."
+    },
+    "e_sept": {
+      "name": "Septal e′ velocity",
+      "abbr": "septal e′",
+      "def": "Early diastolic velocity of the septal mitral annulus.",
+      "method": "Tissue Doppler in the apical four-chamber view, sample volume at the septal annulus.",
+      "significance": "A value below 7 cm/s indicates impaired myocardial relaxation (ASE/EACVI 2016)."
+    },
+    "e_lat": {
+      "name": "Lateral e′ velocity",
+      "abbr": "lateral e′",
+      "def": "Early diastolic velocity of the lateral mitral annulus.",
+      "method": "Tissue Doppler in the apical four-chamber view, sample volume at the lateral annulus.",
+      "significance": "A value below 10 cm/s indicates impaired relaxation (ASE/EACVI 2016)."
+    },
+    "ee_avg": {
+      "name": "Average E/e′ ratio",
+      "abbr": "E/e′",
+      "def": "E velocity divided by the mean of septal and lateral e′.",
+      "method": "Calculated from E and both e′ values or entered directly.",
+      "significance": "A value above 14 is one criterion of elevated LV filling pressure (ASE/EACVI 2016)."
+    },
+    "av_vmax": {
+      "name": "Peak aortic jet velocity",
+      "abbr": "AV Vmax",
+      "def": "Maximal systolic velocity across the aortic valve.",
+      "method": "Continuous-wave Doppler from several windows (apical, right parasternal and others); the highest value is taken.",
+      "significance": "Used to grade aortic stenosis: 2.6–2.9 m/s mild, 3.0–3.9 m/s moderate, ≥ 4.0 m/s severe (EACVI/ASE 2017). Severity is assessed together with gradient and valve area."
+    },
+    "trv": {
+      "name": "Peak tricuspid regurgitation velocity",
+      "abbr": "TRV",
+      "def": "Peak systolic velocity of the tricuspid regurgitant jet.",
+      "method": "Continuous-wave Doppler aligned with the jet; the best envelope from several views is used.",
+      "significance": "A value above 2.8 m/s raises the probability of pulmonary hypertension (ESC/ERS 2022); also used in the diastolic function algorithm (ASE/EACVI 2016)."
+    },
+    "rap": {
+      "name": "Right atrial pressure (estimate)",
+      "abbr": "RAP",
+      "def": "Pressure estimated from IVC diameter and inspiratory collapse.",
+      "method": "IVC ≤ 21 mm with collapse > 50%: 3 mmHg; IVC > 21 mm with collapse < 50%: 15 mmHg; otherwise 8 mmHg.",
+      "significance": "Used to calculate PASP.",
+      "normNote": "Three estimate levels: 3, 8 or 15 mmHg (ASE 2010, Rudski)."
     },
     "pasp": {
-      "short": "PASP",
-      "full": "Pulmonary artery systolic pressure"
+      "name": "Pulmonary artery systolic pressure",
+      "abbr": "PASP",
+      "def": "PASP = 4 × v² + RAP, where v is the peak tricuspid regurgitation velocity.",
+      "method": "Calculated from TRV and RAP or entered directly. Assumes no pulmonary stenosis.",
+      "significance": "ESC/ERS 2022 recommend grading the probability of pulmonary hypertension by TRV rather than PASP.",
+      "normNote": "No single reference value: ESC/ERS 2022 use the TRV cut-off (2.8 m/s)."
+    },
+    "rv_basal": {
+      "name": "RV basal diameter",
+      "abbr": "RVD1",
+      "def": "Maximal transverse dimension of the basal third of the RV at end-diastole.",
+      "method": "Measured in the RV-focused apical four-chamber view.",
+      "significance": "A value above 41 mm indicates RV dilation (ASE/EACVI 2015)."
+    },
+    "tapse": {
+      "name": "Tricuspid annular plane systolic excursion",
+      "abbr": "TAPSE",
+      "def": "Longitudinal systolic displacement of the lateral tricuspid annulus.",
+      "method": "M-mode in the apical four-chamber view with the cursor aligned to annular motion.",
+      "significance": "A value below 17 mm indicates RV systolic dysfunction (ASE/EACVI 2015)."
+    },
+    "rv_sprime": {
+      "name": "RV S′ velocity",
+      "abbr": "S′",
+      "def": "Systolic tissue Doppler velocity of the lateral tricuspid annulus.",
+      "method": "Pulsed tissue Doppler in the apical four-chamber view.",
+      "significance": "A value below 9.5 cm/s indicates RV systolic dysfunction (ASE/EACVI 2015)."
+    },
+    "rv_fac": {
+      "name": "RV fractional area change",
+      "abbr": "FAC",
+      "def": "FAC = (end-diastolic area − end-systolic area) / end-diastolic area × 100%.",
+      "method": "The endocardial border is traced in the RV-focused apical four-chamber view.",
+      "significance": "A value below 35% indicates RV systolic dysfunction (ASE/EACVI 2015)."
+    },
+    "ivc": {
+      "name": "Inferior vena cava diameter",
+      "abbr": "IVC",
+      "def": "IVC diameter close to its junction with the right atrium.",
+      "method": "Subcostal view, 1–2 cm from the right atrium, with the patient supine.",
+      "significance": "Used with inspiratory collapse to estimate right atrial pressure."
+    },
+    "ivc_collapse": {
+      "name": "IVC inspiratory collapse",
+      "abbr": "IVC collapse",
+      "def": "Percent decrease of the diameter during a short sniff.",
+      "method": "Measured in the subcostal view at the same site as the diameter.",
+      "significance": "Collapse above 50% suggests low right atrial pressure (ASE 2010, Rudski)."
+    },
+    "peri": {
+      "name": "Pericardial effusion",
+      "abbr": "Effusion",
+      "def": "Size of the echo-free space between epicardium and pericardium in diastole.",
+      "method": "The largest echo-free space is measured at end-diastole.",
+      "significance": "Semi-quantitative grading: < 10 mm small, 10–20 mm moderate, > 20 mm large (ESC 2015). Haemodynamic impact is assessed separately.",
+      "normNote": "No single reference value; grades are in the rules (ESC 2015)."
+    },
+    "ao_root": {
+      "name": "Aortic root (sinuses of Valsalva)",
+      "abbr": "Ao",
+      "def": "Aortic diameter at the level of the sinuses of Valsalva.",
+      "method": "Parasternal long-axis view, at end-diastole, perpendicular to the aortic axis.",
+      "significance": "Used to assess aortic root dilation.",
+      "normNote": "No single number: nomograms by age, sex and body size are used (ASE/EACVI 2015)."
+    },
+    "pa_diam": {
+      "name": "Main pulmonary artery diameter",
+      "abbr": "PA",
+      "def": "Diameter of the main pulmonary artery.",
+      "method": "Parasternal short-axis view at the level of the great vessels.",
+      "significance": "A value above 25 mm is one of the additional echo signs of pulmonary hypertension (ESC/ERS 2015)."
     }
+  },
+  "units": {
+    "mm": {
+      "sym": "mm",
+      "one": "millimeter",
+      "few": "millimeters",
+      "many": "millimeters",
+      "other": "millimeters"
+    },
+    "cm_body": {
+      "sym": "cm",
+      "one": "centimeter",
+      "few": "centimeters",
+      "many": "centimeters",
+      "other": "centimeters"
+    },
+    "kg": {
+      "sym": "kg",
+      "one": "kilogram",
+      "few": "kilograms",
+      "many": "kilograms",
+      "other": "kilograms"
+    },
+    "m2": {
+      "sym": "m²",
+      "one": "square meter",
+      "few": "square meters",
+      "many": "square meters",
+      "other": "square meters"
+    },
+    "ml": {
+      "sym": "mL",
+      "one": "milliliter",
+      "few": "milliliters",
+      "many": "milliliters",
+      "other": "milliliters"
+    },
+    "mlm2": {
+      "sym": "mL/m²",
+      "one": "milliliter per square meter",
+      "few": "milliliters per square meter",
+      "many": "milliliters per square meter",
+      "other": "milliliters per square meter"
+    },
+    "pct": {
+      "sym": "%",
+      "one": "percent",
+      "few": "percent",
+      "many": "percent",
+      "other": "percent"
+    },
+    "g": {
+      "sym": "g",
+      "one": "gram",
+      "few": "grams",
+      "many": "grams",
+      "other": "grams"
+    },
+    "gm2": {
+      "sym": "g/m²",
+      "one": "gram per square meter",
+      "few": "grams per square meter",
+      "many": "grams per square meter",
+      "other": "grams per square meter"
+    },
+    "cms": {
+      "sym": "cm/s",
+      "one": "centimeter per second",
+      "few": "centimeters per second",
+      "many": "centimeters per second",
+      "other": "centimeters per second"
+    },
+    "ms": {
+      "sym": "m/s",
+      "one": "meter per second",
+      "few": "meters per second",
+      "many": "meters per second",
+      "other": "meters per second"
+    },
+    "mmhg": {
+      "sym": "mmHg",
+      "one": "millimeter of mercury",
+      "few": "millimeters of mercury",
+      "many": "millimeters of mercury",
+      "other": "millimeters of mercury"
+    }
+  },
+  "calc": {
+    "intro": "Each calculator shows the formula, units, reference range, source and a reference example. Reference tests run when the page loads.",
+    "selfTest": "Reference tests: {passed} of {total} passed.",
+    "list": "Calculator list",
+    "fillAll": "Fill in all fields.",
+    "outOfRange": "A value is outside the allowed range. See the hint under the field.",
+    "loadExample": "Load reference example",
+    "fromEcho": "Use echo measurements",
+    "referenceExample": "Reference example check",
+    "expected": "expected",
+    "actual": "actual",
+    "pass": "pass",
+    "fail": "FAIL",
+    "askAi": "Ask AI to explain",
+    "aiPrompt": "For learning purposes, explain this \"{calculator}\" calculator result: {values}. Comment on the reference range and formula.",
+    "ef-teichholz": {
+      "title": "EF — Teichholz method",
+      "note": "ASE/EACVI 2015 do not recommend EF from linear dimensions (Teichholz) for clinical use; the biplane Simpson method is preferred."
+    },
+    "ef-simpson": {
+      "title": "EF — Simpson (biplane method of disks)",
+      "note": "Volumes are measured on the scanner in apical four- and two-chamber views and entered here."
+    },
+    "lvmass-rwt": {
+      "title": "LV mass index (Devereux) and RWT",
+      "note": "Geometry: with increased LVMi, RWT > 0.42 is concentric and ≤ 0.42 eccentric hypertrophy; normal LVMi with RWT > 0.42 is concentric remodeling."
+    },
+    "diastolic": {
+      "title": "Mitral E/A and average E/e′",
+      "note": "Results are interpreted in the ASE/EACVI 2016 algorithm together with other criteria (TRV, LAVi); see the Conclusion section."
+    },
+    "pasp": {
+      "title": "PASP = 4v² + RAP",
+      "note": "RAP can be taken from the \"RAP from IVC\" calculator."
+    },
+    "rap-ivc": {
+      "title": "RAP from IVC",
+      "note": "Simplified right atrial pressure estimate (ASE 2010, Rudski; ASE/EACVI 2015)."
+    }
+  },
+  "outputs": {
+    "edv": {
+      "name": "End-diastolic volume",
+      "abbr": "EDV"
+    },
+    "esv": {
+      "name": "End-systolic volume",
+      "abbr": "ESV"
+    },
+    "ef": {
+      "name": "Ejection fraction",
+      "abbr": "EF"
+    },
+    "sv": {
+      "name": "Stroke volume",
+      "abbr": "SV"
+    },
+    "eprime_avg": {
+      "name": "Average e′",
+      "abbr": "e′"
+    },
+    "gradient": {
+      "name": "RV–RA systolic gradient",
+      "abbr": "ΔP"
+    },
+    "geometry": {
+      "name": "LV geometry",
+      "abbr": "Geometry"
+    }
+  },
+  "geometry": {
+    "normal": "Normal geometry",
+    "concentricRemodeling": "Concentric remodeling",
+    "eccentricHypertrophy": "Eccentric hypertrophy",
+    "concentricHypertrophy": "Concentric hypertrophy"
+  },
+  "rules": {
+    "lvef_reduced": "LVEF below the sex-specific reference (men < 52%, women < 54%).",
+    "lv_concentric_remodeling": "LV concentric remodeling: normal LVMi, RWT > 0.42.",
+    "lv_eccentric_hypertrophy": "LV eccentric hypertrophy: increased LVMi, RWT ≤ 0.42.",
+    "lv_concentric_hypertrophy": "LV concentric hypertrophy: increased LVMi, RWT > 0.42.",
+    "la_enlarged": "Left atrial enlargement: LAVi > 34 mL/m².",
+    "dd_preserved_ef_normal": "Preserved EF; 0–1 of 4 criteria positive: normal diastolic function (ASE/EACVI 2016).",
+    "dd_preserved_ef_indeterminate": "Preserved EF; 2 of 4 criteria positive: indeterminate diastolic function (ASE/EACVI 2016).",
+    "dd_preserved_ef_dysfunction": "Preserved EF; 3–4 of 4 criteria positive: LV diastolic dysfunction (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade1": "Reduced EF; E/A ≤ 0.8 and E ≤ 50 cm/s: normal LA pressure, grade I diastolic dysfunction (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade3": "Reduced EF; E/A ≥ 2: elevated LA pressure, grade III diastolic dysfunction (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade1_by_criteria": "Reduced EF; intermediate E/A; 0–1 of 3 criteria positive (E/e′ > 14, TRV > 2.8 m/s, LAVi > 34): normal LA pressure, grade I (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade2": "Reduced EF; intermediate E/A; 2–3 of 3 criteria positive: elevated LA pressure, grade II diastolic dysfunction (ASE/EACVI 2016).",
+    "ph_trv_low": "TRV ≤ 2.8 m/s: low echocardiographic probability of pulmonary hypertension, intermediate if other signs are present (ESC/ERS 2022).",
+    "ph_trv_intermediate": "TRV 2.9–3.4 m/s: intermediate probability of pulmonary hypertension, high if other signs are present (ESC/ERS 2022).",
+    "ph_trv_high": "TRV > 3.4 m/s: high echocardiographic probability of pulmonary hypertension (ESC/ERS 2022).",
+    "tapse_pasp_low": "TAPSE/PASP < 0.55 mm/mmHg: additional echo sign of pulmonary hypertension (ESC/ERS 2022).",
+    "rv_dilated": "RV dilation: basal diameter > 41 mm.",
+    "rv_dysfunction_tapse": "Sign of RV systolic dysfunction: TAPSE < 17 mm.",
+    "rv_dysfunction_sprime": "Sign of RV systolic dysfunction: S′ < 9.5 cm/s.",
+    "rv_dysfunction_fac": "Sign of RV systolic dysfunction: FAC < 35%.",
+    "rap_normal": "Estimated RA pressure: 3 mmHg (IVC ≤ 21 mm, collapse > 50%).",
+    "rap_intermediate": "Estimated RA pressure: 8 mmHg (intermediate pattern).",
+    "rap_high": "Estimated RA pressure: 15 mmHg (IVC > 21 mm, collapse < 50%).",
+    "peri_small": "Small pericardial effusion (< 10 mm).",
+    "peri_moderate": "Moderate pericardial effusion (10–20 mm).",
+    "peri_large": "Large pericardial effusion (> 20 mm).",
+    "as_mild": "AV Vmax 2.6–2.9 m/s: consistent with mild aortic stenosis; confirm with gradient and valve area.",
+    "as_moderate": "AV Vmax 3.0–3.9 m/s: consistent with moderate aortic stenosis; confirm with gradient and valve area.",
+    "as_severe": "AV Vmax ≥ 4.0 m/s: consistent with severe aortic stenosis; confirm with gradient and valve area.",
+    "pa_dilated": "Main pulmonary artery dilation (> 25 mm)."
+  },
+  "conclusion": {
+    "title": "Echocardiography conclusion — DRAFT",
+    "intro": "The draft is built by rules from the measurements on the Echo parameters page. It is neither saved nor exported until approved.",
+    "findings": "Findings",
+    "statusDraft": "Draft",
+    "statusApproved": "Approved by a doctor",
+    "evidence": "Evidence",
+    "noFindings": "Not enough measurements for the rules. Enter echo parameters first or load the teaching example.",
+    "goToEcho": "Go to echo parameters",
+    "allRules": "All rules ({count})",
+    "rulesHelp": "Each rule can be approved or rejected only by a verified doctor of its specialty. Every action is logged.",
+    "approveHeading": "Approve the conclusion",
+    "approve": "Approve",
+    "doctorNote": "Doctor’s note",
+    "doctorNoteHint": "The note is marked separately as \"Doctor’s note\". Do not include patient personal data.",
+    "approvedHeading": "Approved conclusion",
+    "approvedBy": "Approved by",
+    "copy": "Copy text",
+    "copied": "Copied.",
+    "selectedForCopy": "Text selected — press Ctrl+C to copy.",
+    "cannotApproveHeading": "You cannot approve this conclusion",
+    "requiredSpecialty": "Required specialty: {specialty}."
+  },
+  "rule": {
+    "notReviewed": "Rule not yet reviewed by a doctor",
+    "approvedBy": "Rule approved by",
+    "rejectedBy": "Rule rejected by",
+    "approve": "Approve rule",
+    "reject": "Reject",
+    "specialty": "Specialty"
+  },
+  "ai": {
+    "intro": "The learning assistant explains formulas and parameters and comments on calculator results. It does not diagnose or recommend treatment.",
+    "label": "Prepared by AI, not approved by a doctor",
+    "quota": "Today: {used} of {limit} requests used ({plan}).",
+    "question": "Your question",
+    "noPatientData": "Do not include patient name, ID, date of birth or other personal data. Numbers and units only.",
+    "send": "Send",
+    "stop": "Stop",
+    "thinking": "Preparing an answer…",
+    "rule1": "Every answer cites a source; without a source there is no answer.",
+    "rule2": "Attempts to change the rules (such as \"forget your instructions\") are refused.",
+    "rule3": "The chat is kept only while this page is open."
+  },
+  "questions": {
+    "intro": "Residents and students send questions about a conclusion or rule to doctors of the relevant specialty. The site itself does not answer.",
+    "new": "New question",
+    "specialty": "To: specialty",
+    "toDoctor": "Question to a doctor ({specialty})",
+    "noPatientData": "Measurement values and patient data are not sent. Phrase the question in general terms.",
+    "send": "Send to a doctor",
+    "sent": "Question sent.",
+    "toAnswer": "Questions awaiting your answer",
+    "mine": "My questions",
+    "none": "No questions yet.",
+    "noAnswer": "No answer yet.",
+    "answer": "Answer (doctor’s note)",
+    "sendAnswer": "Send answer"
+  },
+  "plans": {
+    "intro": "Request limits and answer size (max_tokens) are set on the server and cannot be changed by users.",
+    "yourPlan": "Your plan: {plan}.",
+    "current": "Current",
+    "subscribe": "Subscribe",
+    "cancel": "Cancel subscription",
+    "cancelRule": "A cancelled subscription stays active until the end of the paid period, then switches to the free plan.",
+    "providers": "Payment providers",
+    "providersOff": "The payment module is off (paymentsEnabled = false). Adapters are not called.",
+    "providersOn": "The payment module is on.",
+    "notConnected": "not connected (stub)",
+    "intlCard": "International card provider",
+    "cardDataNote": "Card data never passes through the site server: the provider’s hosted page is used; the server stores only a token and status.",
+    "col": {
+      "name": "Plan",
+      "period": "Period",
+      "price": "Price",
+      "limit": "Requests per day",
+      "maxTokens": "max_tokens",
+      "status": "Status",
+      "action": "Action"
+    },
+    "free": {
+      "name": "Free"
+    },
+    "daily": {
+      "name": "Daily subscription"
+    },
+    "weekly": {
+      "name": "Weekly subscription"
+    },
+    "monthly": {
+      "name": "Monthly subscription"
+    },
+    "yearly": {
+      "name": "Yearly subscription"
+    }
+  },
+  "periods": {
+    "daily": "Day",
+    "weekly": "Week",
+    "monthly": "Month",
+    "yearly": "Year"
+  },
+  "planStatus": {
+    "active": "Active",
+    "paused": "Paused",
+    "cancelled": "Cancelled"
+  },
+  "account": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signInRequired": "Sign in to use this section.",
+    "login": "Sign in",
+    "register": "Register",
+    "registerIntro": "Complete your profile before signing in. The diploma or license number is stored only for verification and is not shown on the site.",
+    "fullName": "Full name",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters. The password is stored hashed.",
+    "role": "Role",
+    "roleHint": "Only the system owner can assign the admin role.",
+    "specialty": "Specialty",
+    "studyDirection": "Field of study",
+    "institution": "Institution",
+    "license": "License number",
+    "diploma": "Diploma or student ID number",
+    "licenseHint": "For verification only; not shown to other users.",
+    "confirmAccurate": "My information is correct",
+    "createAccount": "Create account",
+    "status": "Status",
+    "action": "Action",
+    "plan": "Plan",
+    "registered": "Registered",
+    "adminFlag": "admin",
+    "pendingNote": "Your license is being checked by an admin. You can view rules but cannot approve them yet.",
+    "cannotApproveNote": "Residents and students cannot approve; send a question via \"Questions to doctors\".",
+    "licensePrivacy": "Diploma and license data are stored only for verification and are not displayed publicly.",
+    "demoAccounts": "Demo accounts",
+    "demoAccountsHint": "Demo mode only. Password for all: {password}",
+    "useDemo": "Fill in",
+    "resetDemo": "Reset demo data"
+  },
+  "roles": {
+    "doctor": "Doctor",
+    "resident": "Resident",
+    "student": "Student"
+  },
+  "verification": {
+    "pending": "Pending verification",
+    "approved": "Verified",
+    "rejected": "Rejected",
+    "not_required": "Not required"
+  },
+  "specialties": {
+    "cardiology": "Cardiology",
+    "functional_diagnostics": "Functional diagnostics",
+    "anesthesiology_icu": "Anesthesiology and intensive care",
+    "internal_medicine": "Internal medicine",
+    "pediatric_cardiology": "Pediatric cardiology",
+    "cardiac_surgery": "Cardiovascular surgery",
+    "emergency_medicine": "Emergency medicine"
+  },
+  "studyDirections": {
+    "general_medicine": "General medicine",
+    "pediatrics": "Pediatrics",
+    "higher_nursing": "Higher nursing"
+  },
+  "admin": {
+    "note": "Admins manage users, license checks, settings and logs. Admin rights do not include approving medical content.",
+    "users": "Users and license verification",
+    "license": "License / diploma",
+    "approve": "Approve",
+    "reject": "Reject",
+    "journal": "Log",
+    "settings": "Settings",
+    "settingsNote": "Global flags are changed on the server in config/app.json.",
+    "on": "on",
+    "off": "off"
+  },
+  "journal": {
+    "all": "All",
+    "filter": "Type",
+    "date": "Date",
+    "kind": "Type",
+    "details": "Details",
+    "empty": "No entries.",
+    "verification": "License check",
+    "approval": "Approval",
+    "registration": "Registration",
+    "answer": "Doctor answer",
+    "payment": "Payment",
+    "admin": "Admin"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "serverError": "Server error. Please try again later.",
+    "notSignedIn": "Please sign in first.",
+    "forbidden": "You do not have permission for this action.",
+    "notDoctor": "Only doctors can approve. Residents and students send a question to a doctor.",
+    "notVerified": "Your license is not verified yet: you can view rules but not approve them.",
+    "otherSpecialty": "Rejected by the system: this rule belongs to another specialty. You can approve only within your own specialty.",
+    "validation": "The form has errors. Correct the marked fields.",
+    "emailTaken": "An account with this email already exists.",
+    "badCredentials": "Wrong email or password.",
+    "notFound": "Not found.",
+    "badAction": "Invalid action.",
+    "emptyConclusion": "The conclusion has no findings.",
+    "messageTooLong": "The text is too long (2000 characters at most).",
+    "personalData": "The text may contain personal data (a date, long number, email, passport or words like \"date of birth\"). Remove it and send again.",
+    "noSubscription": "No active subscription.",
+    "paymentsDisabled": "Payments are disabled (test mode). Subscriptions are not available yet.",
+    "emptyChat": "Write a question.",
+    "tooManyTurns": "The chat is too long. Reload the page to start a new one.",
+    "badMessage": "Invalid request format.",
+    "quotaExceeded": "Today’s AI request limit is used up. Try again tomorrow.",
+    "rateLimited": "Too many requests. Please wait a moment.",
+    "injection": "This request cannot change the AI rules. Ask a learning question.",
+    "aiUnavailable": "AI is unavailable. Check that ANTHROPIC_API_KEY is set on the server or try later.",
+    "aiNotGranted": "Access to AI was not allowed.",
+    "aiDisabled": "The AI assistant is turned off (aiEnabled = false).",
+    "noSource": "Source not found: this question cannot be answered from the site’s sources.",
+    "payloadTooLarge": "The request is too large.",
+    "field": {
+      "required": "Fill in this field.",
+      "invalidEmail": "Invalid email address.",
+      "passwordShort": "The password must have at least 8 characters.",
+      "invalidRole": "Invalid role.",
+      "mustConfirm": "Confirm that your information is correct."
+    },
+    "badSignature": "The payment notification signature could not be verified.",
+    "notImplemented": "This function is not connected yet (stub)."
   }
 }

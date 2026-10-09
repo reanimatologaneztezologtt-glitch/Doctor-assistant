@@ -1,0 +1,253 @@
+// Business logic shared by the Node server and the in-browser demo backend.
+// Every method takes the acting user (or null) and enforces permissions here.
+import { ROLES, VERIFICATION, canAnswerQuestion, canApprove, isAdmin, validateRegistration } from './policy.js';
+import { effectivePlan, paymentsActive } from './config.js';
+import { detectPersonalData } from './ai-guard.js';
+
+export class ServiceError extends Error {
+  constructor(code, status = 400, details = undefined) {
+    super(code);
+    this.code = code;
+    this.status = status;
+    this.details = details;
+  }
+}
+
+export function publicUser(user) {
+  if (!user) return null;
+  const { passwordHash, licenseNumber, ...rest } = user;
+  return rest;
+}
+
+export function createService({ store, hasher, randomId, config, plans, rules, specialties, now = () => Date.now() }) {
+  const iso = () => new Date(now()).toISOString();
+  const ruleById = new Map(rules.rules.map((r) => [r.id, r]));
+
+  function journal(kind, entry) {
+    return store.insert('journal', { id: randomId(), kind, at: iso(), ...entry });
+  }
+  function requireUser(actor) {
+    if (!actor) throw new ServiceError('notSignedIn', 401);
+    return actor;
+  }
+  function requireAdmin(actor) {
+    requireUser(actor);
+    if (!isAdmin(actor)) throw new ServiceError('forbidden', 403);
+    return actor;
+  }
+  function planFor(user) {
+    const id = effectivePlan(user, config, now());
+    return plans.plans.find((p) => p.id === id) || plans.plans.find((p) => p.id === 'free');
+  }
+
+  return {
+    async register(input) {
+      const errors = validateRegistration(input, specialties);
+      if (errors.length) throw new ServiceError('validation', 400, errors);
+      const email = String(input.email).trim().toLowerCase();
+      if (store.find('users', (u) => u.email === email)) throw new ServiceError('emailTaken', 409);
+      const user = {
+        id: randomId(),
+        fullName: String(input.fullName).trim(),
+        email,
+        passwordHash: await hasher.hash(String(input.password)),
+        role: input.role,
+        specialty: input.role === 'student' ? null : input.specialty,
+        studyDirection: input.role === 'student' ? input.studyDirection : null,
+        institution: String(input.institution).trim(),
+        licenseNumber: String(input.licenseNumber).trim(),
+        verification: input.role === 'doctor' ? VERIFICATION.pending : VERIFICATION.notRequired,
+        isAdmin: false,
+        plan: 'free',
+        subscription: null,
+        createdAt: iso(),
+      };
+      store.insert('users', user);
+      journal('registration', { userId: user.id, role: user.role });
+      return publicUser(user);
+    },
+
+    async login(email, password) {
+      const user = store.find('users', (u) => u.email === String(email || '').trim().toLowerCase());
+      if (!user || !(await hasher.verify(String(password || ''), user.passwordHash))) {
+        throw new ServiceError('badCredentials', 401);
+      }
+      return publicUser(user);
+    },
+
+    getUser(id) {
+      return store.find('users', (u) => u.id === id);
+    },
+
+    me(actor) {
+      if (!actor) return null;
+      const plan = planFor(actor);
+      return { ...publicUser(actor), effectivePlan: plan.id };
+    },
+
+    // ---- admin: users and license verification ------------------------
+    listUsers(actor) {
+      requireAdmin(actor);
+      // License numbers are shown to admins only, for manual verification.
+      return store.all('users').map(({ passwordHash, ...u }) => u);
+    },
+
+    verifyDoctor(actor, userId, action, note = '') {
+      requireAdmin(actor);
+      const user = store.find('users', (u) => u.id === userId);
+      if (!user) throw new ServiceError('notFound', 404);
+      if (user.role !== 'doctor') throw new ServiceError('notDoctor', 400);
+      if (!['approve', 'reject'].includes(action)) throw new ServiceError('badAction', 400);
+      const verification = action === 'approve' ? VERIFICATION.approved : VERIFICATION.rejected;
+      store.update('users', userId, { verification, verifiedAt: iso(), verifiedBy: actor.id });
+      journal('verification', { adminId: actor.id, userId, action, note: String(note).slice(0, 500) });
+      return publicUser(store.find('users', (u) => u.id === userId));
+    },
+
+    journal(actor, kind) {
+      requireAdmin(actor);
+      const all = store.all('journal');
+      return (kind ? all.filter((j) => j.kind === kind) : all).reverse();
+    },
+
+    // ---- medical rule approval ------------------------------------------
+    ruleStatuses() {
+      const out = {};
+      for (const d of store.all('ruleDecisions')) out[d.ruleId] = d; // last decision wins
+      return out;
+    },
+
+    decideRule(actor, ruleId, action) {
+      requireUser(actor);
+      const rule = ruleById.get(ruleId);
+      if (!rule) throw new ServiceError('notFound', 404);
+      if (!['approve', 'reject'].includes(action)) throw new ServiceError('badAction', 400);
+      const check = canApprove(actor, rule.specialty);
+      if (!check.ok) throw new ServiceError(check.reason, 403);
+      const decision = {
+        id: randomId(), ruleId, action, doctorId: actor.id, doctorName: actor.fullName,
+        specialty: actor.specialty, at: iso(),
+      };
+      store.insert('ruleDecisions', decision);
+      journal('approval', { target: 'rule', doctorId: actor.id, doctorName: actor.fullName, specialty: actor.specialty, ruleId, action });
+      return decision;
+    },
+
+    // Approving a draft conclusion. Measurement values are never sent here;
+    // only the ids of the rules that produced the findings.
+    approveConclusion(actor, ruleIds) {
+      requireUser(actor);
+      if (!Array.isArray(ruleIds) || ruleIds.length === 0) throw new ServiceError('emptyConclusion', 400);
+      const specialtiesNeeded = new Set();
+      for (const id of ruleIds) {
+        const rule = ruleById.get(id);
+        if (!rule) throw new ServiceError('notFound', 404);
+        specialtiesNeeded.add(rule.specialty);
+      }
+      for (const sp of specialtiesNeeded) {
+        const check = canApprove(actor, sp);
+        if (!check.ok) throw new ServiceError(check.reason, 403);
+      }
+      const at = iso();
+      for (const ruleId of ruleIds) {
+        journal('approval', { target: 'conclusion', doctorId: actor.id, doctorName: actor.fullName, specialty: actor.specialty, ruleId, action: 'approve' });
+      }
+      return { approvedBy: actor.fullName, specialty: actor.specialty, at };
+    },
+
+    // ---- questions to doctors ---------------------------------------------
+    createQuestion(actor, { specialty, ruleId = null, text }) {
+      requireUser(actor);
+      if (!specialties.specialties.some((s) => s.id === specialty)) throw new ServiceError('validation', 400, [{ field: 'specialty', code: 'required' }]);
+      const body = String(text || '').trim();
+      if (!body) throw new ServiceError('validation', 400, [{ field: 'text', code: 'required' }]);
+      if (body.length > 2000) throw new ServiceError('messageTooLong', 400);
+      if (detectPersonalData(body).length) throw new ServiceError('personalData', 400);
+      if (ruleId && !ruleById.has(ruleId)) throw new ServiceError('notFound', 404);
+      return store.insert('questions', {
+        id: randomId(), askerId: actor.id, askerName: actor.fullName, askerRole: actor.role,
+        specialty, ruleId, text: body, createdAt: iso(), answers: [],
+      });
+    },
+
+    listQuestions(actor) {
+      requireUser(actor);
+      const mine = store.filter('questions', (q) => q.askerId === actor.id);
+      const toAnswer = store.filter('questions', (q) => q.askerId !== actor.id && canAnswerQuestion(actor, q).ok);
+      return { mine: mine.reverse(), toAnswer: toAnswer.reverse() };
+    },
+
+    answerQuestion(actor, questionId, text) {
+      requireUser(actor);
+      const q = store.find('questions', (x) => x.id === questionId);
+      if (!q) throw new ServiceError('notFound', 404);
+      const check = canAnswerQuestion(actor, q);
+      if (!check.ok) throw new ServiceError(check.reason, 403);
+      const body = String(text || '').trim();
+      if (!body) throw new ServiceError('validation', 400, [{ field: 'text', code: 'required' }]);
+      if (detectPersonalData(body).length) throw new ServiceError('personalData', 400);
+      const answers = [...q.answers, { doctorId: actor.id, doctorName: actor.fullName, specialty: actor.specialty, text: body, at: iso() }];
+      store.update('questions', q.id, { answers });
+      journal('answer', { doctorId: actor.id, questionId: q.id });
+      return store.find('questions', (x) => x.id === questionId);
+    },
+
+    // ---- plans, AI quota and usage ----------------------------------------
+    plans() {
+      return { testMode: config.testMode, paymentsEnabled: paymentsActive(config), plans: plans.plans };
+    },
+
+    aiQuota(actor) {
+      requireUser(actor);
+      const plan = planFor(actor);
+      const day = iso().slice(0, 10);
+      const used = store.filter('usage', (u) => u.userId === actor.id && u.at.startsWith(day)).length;
+      return { planId: plan.id, dailyLimit: plan.dailyRequests, used, maxTokens: plan.maxTokens, remaining: Math.max(0, plan.dailyRequests - used) };
+    },
+
+    recordUsage(actor, { inputTokens = 0, outputTokens = 0, outcome = 'ok' }) {
+      requireUser(actor);
+      return store.insert('usage', { id: randomId(), userId: actor.id, at: iso(), inputTokens, outputTokens, outcome });
+    },
+
+    usage(actor) {
+      requireAdmin(actor);
+      return store.all('usage').reverse();
+    },
+
+    cancelSubscription(actor) {
+      requireUser(actor);
+      const sub = actor.subscription;
+      if (!sub || sub.status !== 'active') throw new ServiceError('noSubscription', 400);
+      // Stays active until periodEnd, then effectivePlan() falls back to free.
+      store.update('users', actor.id, { subscription: { ...sub, status: 'cancelled', cancelledAt: iso() } });
+      journal('payment', { userId: actor.id, event: 'subscription_cancelled', planId: sub.planId });
+      return publicUser(store.find('users', (u) => u.id === actor.id));
+    },
+
+    startCheckout(actor, { planId, providerId }) {
+      requireUser(actor);
+      journal('payment', { userId: actor.id, event: 'checkout_requested', planId, providerId, paymentsEnabled: paymentsActive(config) });
+      if (!paymentsActive(config)) throw new ServiceError('paymentsDisabled', 403);
+      return { planId, providerId };
+    },
+
+    refund(actor, paymentId) {
+      requireAdmin(actor);
+      journal('payment', { adminId: actor.id, event: 'refund_requested', paymentId });
+      if (!paymentsActive(config)) throw new ServiceError('paymentsDisabled', 403);
+      return { paymentId };
+    },
+
+    // Not exposed over HTTP: system owner only (server/cli.mjs, demo seed).
+    grantAdmin(email) {
+      const user = store.find('users', (u) => u.email === String(email).toLowerCase());
+      if (!user) throw new ServiceError('notFound', 404);
+      store.update('users', user.id, { isAdmin: true });
+      journal('admin', { event: 'admin_granted', userId: user.id });
+      return publicUser(user);
+    },
+
+    roles: ROLES,
+  };
+}

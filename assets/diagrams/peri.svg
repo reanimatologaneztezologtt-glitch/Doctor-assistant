@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" class="dg">
+  <!-- Schematic pericardial effusion: echo-free space measured in diastole. -->
+  <ellipse class="dg-peri" cx="160" cy="100" rx="130" ry="85"/>
+  <ellipse class="dg-art" cx="160" cy="100" rx="100" ry="62"/>
+  <line class="dg-measure" x1="160" y1="162" x2="160" y2="185"/>
+  <text class="dg-label" x="168" y="180">mm</text>
+  <text class="dg-label" x="150" y="104">LV</text>
+</svg>
