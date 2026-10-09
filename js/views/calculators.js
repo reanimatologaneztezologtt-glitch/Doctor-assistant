@@ -3,6 +3,8 @@ import { findNorm, normStatus, roundTo, runCalculator, runReferenceTests } from 
 import { computeMeasurements } from '../core/measurements.js';
 import { el, chip, field } from '../ui/dom.js';
 import { sourceLine } from './common.js';
+import { normChangedNote } from './param-text.js';
+import { thresholdValues } from '../core/thresholds.js';
 
 // Calculator fields reuse echo parameter names; other outputs have their own keys.
 function isParam(ctx, id) {
@@ -24,7 +26,7 @@ function calculatorCard(ctx, def) {
 
   function recompute() {
     result.replaceChildren();
-    const run = runCalculator(def, values);
+    const run = runCalculator(def, values, ctx.thr);
     if (!run.ok) {
       const filled = Object.keys(values).length;
       if (filled) {
@@ -45,7 +47,7 @@ function calculatorCard(ctx, def) {
       const norm = findNorm(def.norms, out.id, run.inputs);
       const status = normStatus(norm, v);
       const shown = fmt.withUnit(v, out.unit, out.decimals);
-      const normText = norm ? `${t('norm.label')} ${fmt.normRange(norm, out.unit, 2)}${norm.when && norm.when.sex ? ` (${fmt.sexLabel(norm.when.sex)})` : ''}` : '';
+      const normText = norm ? `${t('norm.label')} ${fmt.normRange(norm, out.unit, 2)}${norm.when && norm.when.sex ? ` (${fmt.sexLabel(norm.when.sex)})` : ''}${normChangedNote(ctx, norm, out.unit)}` : '';
       return el('div', { class: 'calc__row' }, [
         el('span', { class: 'calc__label', text: `${labelFor(ctx, out.id)} (${abbrFor(ctx, out.id)})` }),
         el('strong', { class: 'calc__value', text: shown }),
@@ -62,7 +64,7 @@ function calculatorCard(ctx, def) {
       rows.push(el('div', { class: 'calc__row calc__row--input' }, [
         el('span', { class: 'calc__label', text: `${labelFor(ctx, n.output)} (${abbrFor(ctx, n.output)})` }),
         el('strong', { text: fmt.withUnit(scope[n.output], input.unit, 2) }),
-        el('span', { class: 'calc__norm', text: `${t('norm.label')} ${fmt.normRange(n, input.unit, 2)}` }),
+        el('span', { class: 'calc__norm', text: `${t('norm.label')} ${fmt.normRange(n, input.unit, 2)}${normChangedNote(ctx, n, input.unit)}` }),
         status ? chip(t(`status.${status}`), status === 'normal' ? 'ok' : 'warn') : null,
       ]));
     }
@@ -120,7 +122,7 @@ function calculatorCard(ctx, def) {
   const loadExample = () => {
     const test = def.tests[0];
     setValues(test.inputs);
-    const results = runReferenceTests(def).filter((r) => r.index === 0);
+    const results = runReferenceTests(def, thresholdValues(ctx.base.thresholds)).filter((r) => r.index === 0);
     testOut.replaceChildren(
       el('p', { class: 'calc__test-title', text: t('calc.referenceExample') }),
       el('ul', { class: 'list' }, results.map((r) => el('li', {
@@ -130,7 +132,7 @@ function calculatorCard(ctx, def) {
   };
 
   const fromEcho = () => {
-    const { values: m } = computeMeasurements(ctx.data.parameters, ctx.readMeasurements());
+    const { values: m } = computeMeasurements(ctx.data.parameters, ctx.readMeasurements(), ctx.thr);
     setValues(m);
   };
 
@@ -152,7 +154,8 @@ function calculatorCard(ctx, def) {
 
 export function renderCalculators(ctx) {
   const { t, data } = ctx;
-  const all = data.formulas.flatMap(runReferenceTests);
+  const published = thresholdValues(ctx.base.thresholds);
+  const all = ctx.base.formulas.flatMap((f) => runReferenceTests(f, published));
   const passed = all.filter((r) => r.pass).length;
   return [
     el('h1', { text: t('nav.calculators') }),

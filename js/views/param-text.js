@@ -10,13 +10,26 @@ export function paramAbbr(ctx, id) {
   return ctx.t(`params.${id}.abbr`);
 }
 
+// " — changed by admin (published: 52–72%)" when a bound differs from the source.
+export function normChangedNote(ctx, norm, unit) {
+  const ids = [norm.lowId, norm.highId].filter(Boolean);
+  if (!ids.some((id) => ctx.thrChanged.has(id))) return '';
+  const published = {};
+  for (const b of ['low', 'high']) {
+    const id = norm[`${b}Id`];
+    if (id) published[b] = ctx.base.thresholds.thresholds.find((x) => x.id === id).value;
+  }
+  const src = ctx.fmt.normRange({ ...norm, ...published }, unit, 2);
+  return ` — ${ctx.t('norm.changedByAdmin', { published: src })}`;
+}
+
 export function normLine(ctx, param, sex) {
   const { t, fmt } = ctx;
   const norm = paramNorm(param, sex);
   if (!norm) return t('norm.none');
   const range = fmt.normRange(norm, param.unit, 2);
   const who = norm.sex ? ` (${fmt.sexLabel(norm.sex)})` : '';
-  return `${t('norm.label')} ${range}${who}`;
+  return `${t('norm.label')} ${range}${who}${normChangedNote(ctx, norm, param.unit)}`;
 }
 
 // "ФВ = 58%, меъёр 52–72% (эркаклар)" and "Ejection fraction: 58 percent".

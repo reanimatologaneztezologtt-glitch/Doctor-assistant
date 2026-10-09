@@ -147,3 +147,42 @@ test('request body size limit and JSON-only POST', async () => {
   const xorigin = await fetch(`${base}/api/auth/logout`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: 'https://evil.example' }, body: '{}' });
   assert.equal(xorigin.status, 403);
 });
+
+test('admin overrides over HTTP: bounded, admin-only, applied to AI knowledge and settings', async () => {
+  // Fresh app: earlier tests used up this IP's AI rate-limit window.
+  const app2 = createApp({ root: ROOT, store: createStore(), aiClient: fakeClient });
+  const server2 = createServer(app2.handler);
+  await new Promise((r) => server2.listen(0, r));
+  const prevBase = base;
+  const prevApp = app;
+  base = `http://127.0.0.1:${server2.address().port}`;
+  app = app2;
+  try {
+    const admin = await reg('lim-admin@x.uz', 'resident');
+    app.service.grantAdmin('lim-admin@x.uz');
+    const user = await reg('lim-user@x.uz', 'student');
+    assert.equal((await api('POST', 'admin/overrides', { key: 'threshold:lavi_high', value: 36 }, user.cookie)).status, 403);
+    const tooFar = await api('POST', 'admin/overrides', { key: 'threshold:lavi_high', value: 60 }, admin.cookie);
+    assert.equal(tooFar.status, 400);
+    assert.equal(tooFar.body.error, 'limitExceeded');
+    assert.equal(tooFar.body.details[0].code, 'outOfBounds');
+    const ok = await api('POST', 'admin/overrides', { key: 'threshold:lavi_high', value: 36 }, admin.cookie);
+    assert.equal(ok.status, 200);
+    assert.equal((await api('GET', 'overrides')).body.thresholds.lavi_high, 36);
+
+    const before = aiCalls.length;
+    await api('POST', 'ai/chat', { messages: [{ role: 'user', content: 'What is LAVi?' }], lang: 'en' }, user.cookie);
+    assert.match(aiCalls[before].system[0].text, /lavi_high = 36 \(changed by the site admin; published value 34\)/);
+
+    await api('POST', 'admin/overrides', { key: 'config:aiEnabled', value: false }, admin.cookie);
+    assert.equal((await api('POST', 'ai/chat', { messages: [{ role: 'user', content: 'What is RWT?' }], lang: 'en' }, user.cookie)).body.error, 'aiDisabled');
+    await api('POST', 'admin/overrides/reset', { key: 'config:aiEnabled' }, admin.cookie);
+    await api('POST', 'admin/overrides/reset', { key: 'threshold:lavi_high' }, admin.cookie);
+    assert.deepEqual((await api('GET', 'overrides')).body.thresholds, {});
+    assert.equal((await api('POST', 'admin/overrides', { key: 'config:paymentsEnabled', value: true }, admin.cookie)).status, 400);
+  } finally {
+    base = prevBase;
+    app = prevApp;
+    server2.close();
+  }
+});

@@ -62,7 +62,10 @@ function approverText(ctx, a) {
 function buildPlainText(ctx, findings, approval, note) {
   const { t } = ctx;
   const lines = [t('conclusion.title'), ''];
-  findings.forEach((f, i) => lines.push(`${i + 1}. ${t(`rules.${f.ruleId}`)} (${evidenceText(ctx, f)}) [${sourceShort(ctx, f.sourceId)}]`));
+  findings.forEach((f, i) => {
+    const changed = f.thresholdIds.some((id) => ctx.thrChanged.has(id)) ? ` — ${t('conclusion.thresholdChanged')}` : '';
+    lines.push(`${i + 1}. ${t(`rules.${f.ruleId}`)} (${evidenceText(ctx, f)}) [${sourceShort(ctx, f.sourceId)}]${changed}`);
+  });
   if (note) lines.push('', `${t('conclusion.doctorNote')}: ${note}`);
   lines.push('', `${t('conclusion.approvedBy')}: ${approverText(ctx, approval)}, ${formatDate(ctx, approval.at)}`);
   lines.push('', t('disclaimer.text'));
@@ -71,11 +74,11 @@ function buildPlainText(ctx, findings, approval, note) {
 
 export async function renderConclusion(ctx) {
   const { t, data, user } = ctx;
-  const { values } = computeMeasurements(data.parameters, ctx.readMeasurements());
-  const findings = evaluateRules(data.rules.rules, values);
+  const { values } = computeMeasurements(data.parameters, ctx.readMeasurements(), ctx.thr);
+  const findings = evaluateRules(data.rules.rules, values, ctx.thr);
   const statuses = await ctx.api.ruleStatuses().catch(() => ({}));
   // Approval belongs to this exact set of findings and this signed-in doctor.
-  const key = JSON.stringify([user ? user.id : null, findings.map((f) => [f.ruleId, f.evidence])]);
+  const key = JSON.stringify([user ? user.id : null, ctx.thr, findings.map((f) => [f.ruleId, f.evidence])]);
   if (approvedState && approvedState.key !== key) approvedState = null;
 
   const head = [
@@ -108,6 +111,7 @@ export async function renderConclusion(ctx) {
     el('ol', { class: 'findings' }, findings.map((f) => el('li', { class: `finding finding--${f.severity}` }, [
       el('p', { class: 'finding__text', text: t(`rules.${f.ruleId}`) }),
       el('p', { class: 'finding__evidence' }, [el('span', { class: 'text-muted', text: `${t('conclusion.evidence')}: ` }), evidenceText(ctx, f)]),
+      f.thresholdIds.some((id) => ctx.thrChanged.has(id)) ? el('p', { class: 'inline-msg inline-msg--error', text: t('conclusion.thresholdChanged') }) : null,
       el('p', { class: 'text-muted' }, [`${t('ui.source')}: ${sourceShort(ctx, f.sourceId)} · `, ruleStatusChip(ctx, statuses[f.ruleId])]),
       ruleDecisionButtons(ctx, f.ruleId, statuses[f.ruleId], () => ctx.rerender()),
     ]))),

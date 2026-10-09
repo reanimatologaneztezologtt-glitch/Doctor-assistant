@@ -6,7 +6,7 @@ export function allParameters(catalog) {
   return catalog.sections.flatMap((s) => s.parameters);
 }
 
-export function computeMeasurements(catalog, raw) {
+export function computeMeasurements(catalog, raw, thresholds = {}) {
   const values = {};
   const derived = new Set();
   for (const [k, v] of Object.entries(raw)) {
@@ -19,8 +19,8 @@ export function computeMeasurements(catalog, raw) {
     for (const p of params) {
       if (derived.has(p.id)) continue;
       const vars = [...variables(parse(p.derive))];
-      if (vars.every((v) => v in values)) {
-        const v = compute(p.derive, values);
+      if (vars.every((v) => v in values || v in thresholds)) {
+        const v = compute(p.derive, { ...thresholds, ...values });
         if (Number.isFinite(v)) {
           values[p.id] = v;
           derived.add(p.id);

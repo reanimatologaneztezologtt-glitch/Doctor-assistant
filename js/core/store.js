@@ -1,7 +1,7 @@
 // Minimal document store: collections of plain objects with string ids.
 // `persist(snapshot)` is called after every write (server: JSON file,
 // browser demo: localStorage).
-export const COLLECTIONS = ['users', 'journal', 'ruleDecisions', 'questions', 'usage', 'payments'];
+export const COLLECTIONS = ['users', 'journal', 'ruleDecisions', 'questions', 'usage', 'payments', 'overrides'];
 
 export function createStore(initial = {}, persist = () => {}) {
   const data = {};
@@ -22,6 +22,11 @@ export function createStore(initial = {}, persist = () => {}) {
       Object.assign(doc, patch);
       save();
       return doc;
+    },
+    remove(c, id) {
+      const i = data[c].findIndex((d) => d.id === id);
+      if (i >= 0) data[c].splice(i, 1);
+      save();
     },
     snapshot: () => JSON.parse(JSON.stringify(data)),
   };

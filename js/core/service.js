@@ -3,6 +3,9 @@
 import { ROLES, VERIFICATION, canAnswerQuestion, canApprove, isAdmin, validateRegistration } from './policy.js';
 import { effectivePlan, paymentsActive } from './config.js';
 import { detectPersonalData } from './ai-guard.js';
+import {
+  applyPlanOverrides, splitOverrides, thresholdValues, validateConfigField, validatePlanField, validateThreshold,
+} from './thresholds.js';
 
 export class ServiceError extends Error {
   constructor(code, status = 400, details = undefined) {
@@ -19,7 +22,7 @@ export function publicUser(user) {
   return rest;
 }
 
-export function createService({ store, hasher, randomId, config, plans, rules, specialties, now = () => Date.now() }) {
+export function createService({ store, hasher, randomId, config, plans, rules, specialties, thresholds, now = () => Date.now() }) {
   const iso = () => new Date(now()).toISOString();
   const ruleById = new Map(rules.rules.map((r) => [r.id, r]));
 
@@ -43,9 +46,24 @@ export function createService({ store, hasher, randomId, config, plans, rules, s
     }
     return out;
   }
+  // Published data plus admin overrides.
+  function effective() {
+    const ov = splitOverrides(store.all('overrides'));
+    return {
+      overrides: ov,
+      config: { ...config, ...ov.config },
+      plans: applyPlanOverrides(plans, ov.plans),
+      thresholds: thresholds ? thresholdValues(thresholds, ov.thresholds) : {},
+    };
+  }
+  function listOverrides() {
+    const docs = store.all('overrides');
+    return { ...splitOverrides(docs), entries: docs };
+  }
   function planFor(user) {
-    const id = effectivePlan(user, config, now());
-    return plans.plans.find((p) => p.id === id) || plans.plans.find((p) => p.id === 'free');
+    const eff = effective();
+    const id = effectivePlan(user, eff.config, now());
+    return eff.plans.plans.find((p) => p.id === id) || eff.plans.plans.find((p) => p.id === 'free');
   }
 
   return {
@@ -214,7 +232,61 @@ export function createService({ store, hasher, randomId, config, plans, rules, s
 
     // ---- plans, AI quota and usage ----------------------------------------
     plans() {
-      return { testMode: config.testMode, paymentsEnabled: paymentsActive(config), plans: plans.plans };
+      const eff = effective();
+      return { testMode: eff.config.testMode, paymentsEnabled: paymentsActive(eff.config), plans: eff.plans.plans };
+    },
+
+    // ---- admin overrides: thresholds, plans, settings ----------------------
+    effective,
+
+    overrides: listOverrides,
+
+    // key: "threshold:<id>", "plan:<planId>:<field>" or "config:<flag>".
+    setOverride(actor, key, value) {
+      requireAdmin(actor);
+      const [kind, a, b] = String(key).split(':');
+      const eff = effective();
+      let errors;
+      let sourceValue;
+      let oldValue;
+      if (kind === 'threshold' && thresholds) {
+        errors = validateThreshold(thresholds, eff.thresholds, a, value, config.adminLimits.maxDeviationPct);
+        sourceValue = thresholds.thresholds.find((t) => t.id === a)?.value;
+        oldValue = eff.thresholds[a];
+      } else if (kind === 'plan') {
+        errors = validatePlanField(eff.plans, a, b, value);
+        sourceValue = plans.plans.find((p) => p.id === a)?.[b];
+        oldValue = eff.plans.plans.find((p) => p.id === a)?.[b];
+      } else if (kind === 'config') {
+        errors = validateConfigField(a, value);
+        sourceValue = config[a];
+        oldValue = eff.config[a];
+      } else {
+        errors = [{ code: 'notFound' }];
+      }
+      if (errors.length) throw new ServiceError(errors[0].code === 'notFound' ? 'notFound' : 'limitExceeded', errors[0].code === 'notFound' ? 404 : 400, errors);
+      const doc = { id: key, value, by: actor.id, byName: actor.fullName, at: iso() };
+      if (store.find('overrides', (o) => o.id === key)) store.update('overrides', key, doc);
+      else store.insert('overrides', doc);
+      journal('settings', { adminId: actor.id, key, oldValue, newValue: value, sourceValue });
+      return listOverrides();
+    },
+
+    resetOverride(actor, key) {
+      requireAdmin(actor);
+      const existing = store.find('overrides', (o) => o.id === key);
+      if (!existing) throw new ServiceError('notFound', 404);
+      const [kind, a] = String(key).split(':');
+      // Resetting one bound must not break the order with the other bound.
+      if (kind === 'threshold' && thresholds) {
+        const source = thresholds.thresholds.find((t) => t.id === a).value;
+        const eff = effective();
+        const errs = validateThreshold(thresholds, eff.thresholds, a, source, config.adminLimits.maxDeviationPct);
+        if (errs.length) throw new ServiceError('limitExceeded', 400, errs);
+      }
+      store.remove('overrides', key);
+      journal('settings', { adminId: actor.id, key, oldValue: existing.value, newValue: null, reset: true });
+      return listOverrides();
     },
 
     aiQuota(actor) {
@@ -247,15 +319,16 @@ export function createService({ store, hasher, randomId, config, plans, rules, s
 
     startCheckout(actor, { planId, providerId }) {
       requireUser(actor);
-      journal('payment', { userId: actor.id, event: 'checkout_requested', planId, providerId, paymentsEnabled: paymentsActive(config) });
-      if (!paymentsActive(config)) throw new ServiceError('paymentsDisabled', 403);
+      const active = paymentsActive(effective().config);
+      journal('payment', { userId: actor.id, event: 'checkout_requested', planId, providerId, paymentsEnabled: active });
+      if (!active) throw new ServiceError('paymentsDisabled', 403);
       return { planId, providerId };
     },
 
     refund(actor, paymentId) {
       requireAdmin(actor);
       journal('payment', { adminId: actor.id, event: 'refund_requested', paymentId });
-      if (!paymentsActive(config)) throw new ServiceError('paymentsDisabled', 403);
+      if (!paymentsActive(effective().config)) throw new ServiceError('paymentsDisabled', 403);
       return { paymentId };
     },
 

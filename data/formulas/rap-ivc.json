@@ -25,7 +25,7 @@
   "outputs": [
     {
       "id": "rap",
-      "expr": "if(ivc<=21, if(ivc_collapse>50, 3, 8), if(ivc_collapse<50, 15, 8))",
+      "expr": "if(ivc<=ivc_high, if(ivc_collapse>ivc_collapse_low, 3, 8), if(ivc_collapse<ivc_collapse_low, 15, 8))",
       "unit": "mmhg",
       "decimals": 0
     }
@@ -33,12 +33,12 @@
   "norms": [
     {
       "output": "ivc",
-      "high": 21,
+      "high": "ivc_high",
       "sourceId": "rudski2010"
     },
     {
       "output": "ivc_collapse",
-      "low": 50,
+      "low": "ivc_collapse_low",
       "lowExclusive": true,
       "sourceId": "rudski2010"
     }

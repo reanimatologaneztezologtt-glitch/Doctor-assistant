@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import { readJson } from './helpers.mjs';
 import { compute, parse, variables } from '../js/core/expr.js';
 import { findNorm, normStatus, runCalculator, runReferenceTests } from '../js/core/calc.js';
+import { resolveFormula, thresholdValues } from '../js/core/thresholds.js';
 
 const ids = readJson('data/formulas/index.json').calculators;
-const formulas = ids.map((id) => readJson(`data/formulas/${id}.json`));
+const published = thresholdValues(readJson('data/thresholds.json'));
+const formulas = ids.map((id) => resolveFormula(readJson(`data/formulas/${id}.json`), published));
 
 test('expression evaluator: arithmetic, precedence, logic, functions', () => {
   assert.equal(compute('1 + 2 * 3', {}), 7);
@@ -33,7 +35,7 @@ test('every calculator has at least one reference example with a tolerance', () 
 // Each reference example is a separate test: a result outside tolerance fails.
 for (const f of formulas) {
   test(`reference examples: ${f.id}`, () => {
-    for (const r of runReferenceTests(f)) {
+    for (const r of runReferenceTests(f, published)) {
       assert.ok(r.pass, `${f.id} #${r.index} ${r.outputId}: expected ${r.expected} ±${r.tolerance}, got ${r.actual}`);
     }
   });
@@ -41,7 +43,7 @@ for (const f of formulas) {
 
 test('a result outside tolerance is reported as a failure', () => {
   const broken = { ...formulas[0], tests: [{ ...formulas[0].tests[0], expected: { ef: 60 }, tolerance: 0.01 }] };
-  assert.equal(runReferenceTests(broken)[0].pass, false);
+  assert.equal(runReferenceTests(broken, published)[0].pass, false);
 });
 
 test('input validation: missing, out of range, invalid option', () => {
@@ -64,7 +66,7 @@ test('sex-specific norms (ASE/EACVI 2015): EF 53% is normal for men, low for wom
 
 test('RAP from IVC: boundary values (ASE 2010)', () => {
   const rap = formulas.find((f) => f.id === 'rap-ivc');
-  const v = (ivc, c) => runCalculator(rap, { ivc, ivc_collapse: c }).outputs.rap;
+  const v = (ivc, c) => runCalculator(rap, { ivc, ivc_collapse: c }, published).outputs.rap;
   assert.equal(v(21, 51), 3);
   assert.equal(v(21, 50), 8);
   assert.equal(v(22, 49), 15);

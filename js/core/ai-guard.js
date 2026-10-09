@@ -52,7 +52,8 @@ export function validateChat(messages) {
 }
 
 // Knowledge base the assistant may cite: sources, parameters, formulas, rules.
-export function buildKnowledge({ sources, parameters, formulas, rules, dict }) {
+// `parameters` must have norms resolved to numbers (thresholds.resolveParameters).
+export function buildKnowledge({ sources, parameters, formulas, rules, dict, thresholds = null, thresholdValues = {} }) {
   const lines = ['SOURCES (cite only these ids):'];
   for (const s of sources.sources) lines.push(`[${s.id}] ${s.citation}`);
   lines.push('', 'ECHO PARAMETERS (reference values):');
@@ -70,6 +71,14 @@ export function buildKnowledge({ sources, parameters, formulas, rules, dict }) {
   lines.push('', 'CALCULATORS:');
   for (const f of formulas) {
     lines.push(`- ${f.id}: ${f.outputs.map((o) => `${o.id} = ${o.expr}`).join('; ')} [${f.sourceIds.join('][')}]`);
+  }
+  if (thresholds) {
+    lines.push('', 'NAMED CUT-OFFS (used in rules and formulas):');
+    for (const t of thresholds.thresholds) {
+      const current = thresholdValues[t.id] ?? t.value;
+      const note = current !== t.value ? ` (changed by the site admin; published value ${t.value})` : '';
+      lines.push(`- ${t.id} = ${current}${note} [${t.sourceId}]`);
+    }
   }
   lines.push('', 'DRAFT-CONCLUSION RULES:');
   for (const r of rules.rules) lines.push(`- ${r.id}: if ${r.when} [${r.sourceId}]`);

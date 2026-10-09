@@ -13,6 +13,10 @@ export function validateConfig(cfg) {
   } else if (!cfg.supportedLanguages.includes(cfg.defaultLanguage)) {
     errors.push('defaultLanguage must be one of supportedLanguages');
   }
+  const pct = cfg.adminLimits && cfg.adminLimits.maxDeviationPct;
+  if (typeof pct !== 'number' || pct < 0 || pct > 50) {
+    errors.push('adminLimits.maxDeviationPct must be a number from 0 to 50');
+  }
   if (cfg.testMode === true && cfg.paymentsEnabled === true) {
     errors.push('paymentsEnabled must be false while testMode is true');
   }

@@ -83,6 +83,19 @@ approves them.
   with `actingAs: "admin"` and the previous decision. (Owner's decision; it
   replaces the original spec 4.2 restriction on admins.) Answering questions
   stays with verified doctors of the specialty.
+- Admin changes stay within limits. Clinical cut-offs live in one list,
+  `data/thresholds.json` (69 values, each with its published value and source).
+  Norms, rules, the RAP estimate, LV geometry and rule texts all read from it.
+  An admin may set a value only within ±`adminLimits.maxDeviationPct`
+  (`config/app.json`, default 20%) of the published value and only if the
+  order constraints hold (lower bound < upper bound, mild < moderate < severe).
+  Plan limits are bounded (requests/day 1–1000, max_tokens 1000–16000, price
+  ≥ 0, free plan price 0); `aiEnabled` and `testMode` can be switched;
+  `paymentsEnabled` stays locked while providers are stubs. Formula
+  coefficients are not editable, and calculator reference tests always run
+  against the published values. Changed values are marked "changed by admin
+  (published: …)" wherever they appear, flagged in draft conclusions, passed
+  to the AI as such, logged with old/new/published values, and can be reset.
 - Draft conclusions are not stored or exported until approved; the approval log
   holds rule ids only, never measurement values.
 - Measurements stay in the browser. Questions to doctors and AI requests are

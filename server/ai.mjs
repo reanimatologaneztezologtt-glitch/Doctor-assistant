@@ -11,15 +11,22 @@ export function createAnthropicClient() {
   return new Anthropic();
 }
 
-export function createAiProxy({ client, service, knowledge, sourceIds, config }) {
-  const systemByLang = new Map();
+export function createAiProxy({ client, service, knowledge, sourceIds, getConfig }) {
+  // `knowledge()` returns the current knowledge base text (it changes when an
+  // admin changes a cut-off); system prompts are cached per text and language.
+  const systemCache = new Map();
   const systemFor = (lang) => {
-    if (!systemByLang.has(lang)) systemByLang.set(lang, buildSystemPrompt(knowledge, lang));
-    return systemByLang.get(lang);
+    const kb = knowledge();
+    const key = `${lang}\n${kb}`;
+    if (!systemCache.has(key)) {
+      if (systemCache.size > 12) systemCache.clear();
+      systemCache.set(key, buildSystemPrompt(kb, lang));
+    }
+    return systemCache.get(key);
   };
 
   return async function chat(user, { messages, lang }) {
-    if (!config.aiEnabled) return { status: 403, body: { error: 'aiDisabled' } };
+    if (!getConfig().aiEnabled) return { status: 403, body: { error: 'aiDisabled' } };
     const invalid = validateChat(messages);
     if (invalid) return { status: 400, body: { error: invalid } };
     const quota = service.aiQuota(user);

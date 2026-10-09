@@ -1,0 +1,773 @@
+{
+  "note": "Single source of truth for clinical cut-offs. \"value\" is the published value from sourceId. Admins may override within the allowed range (config adminLimits.maxDeviationPct, and the order constraints below); overrides are logged and shown as changed.",
+  "thresholds": [
+    {
+      "id": "lvedd_low_m",
+      "value": 42.0,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvedd",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvedd_high_m",
+      "value": 58.4,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvedd",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvedd_low_f",
+      "value": 37.8,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvedd",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvedd_high_f",
+      "value": 52.2,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvedd",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvesd_low_m",
+      "value": 25.0,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvesd",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvesd_high_m",
+      "value": 39.8,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvesd",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvesd_low_f",
+      "value": 21.6,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvesd",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvesd_high_f",
+      "value": 34.8,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "lvesd",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvedv_low_m",
+      "value": 62,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedv",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvedv_high_m",
+      "value": 150,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedv",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvedv_low_f",
+      "value": 46,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedv",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvedv_high_f",
+      "value": 106,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedv",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvesv_low_m",
+      "value": 21,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesv",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvesv_high_m",
+      "value": 61,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesv",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvesv_low_f",
+      "value": 14,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesv",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvesv_high_f",
+      "value": 42,
+      "unit": "ml",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesv",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvedvi_low_m",
+      "value": 34,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedvi",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvedvi_high_m",
+      "value": 74,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedvi",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvedvi_low_f",
+      "value": 29,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedvi",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvedvi_high_f",
+      "value": 61,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvedvi",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvesvi_low_m",
+      "value": 11,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesvi",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvesvi_high_m",
+      "value": 31,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesvi",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvesvi_low_f",
+      "value": 8,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesvi",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvesvi_high_f",
+      "value": 24,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvesvi",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvef_low_m",
+      "value": 52,
+      "unit": "pct",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvef",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvef_high_m",
+      "value": 72,
+      "unit": "pct",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvef",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvef_low_f",
+      "value": 54,
+      "unit": "pct",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvef",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvef_high_f",
+      "value": 74,
+      "unit": "pct",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvef",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lavi_high",
+      "value": 34,
+      "unit": "mlm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lavi",
+      "bound": "high"
+    },
+    {
+      "id": "ivsd_low_m",
+      "value": 6,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "ivsd",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "ivsd_high_m",
+      "value": 10,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "ivsd",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "ivsd_low_f",
+      "value": 6,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "ivsd",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "ivsd_high_f",
+      "value": 9,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "ivsd",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "pwd_low_m",
+      "value": 6,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "pwd",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "pwd_high_m",
+      "value": 10,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "pwd",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "pwd_low_f",
+      "value": 6,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "pwd",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "pwd_high_f",
+      "value": 9,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "pwd",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvmass_low_m",
+      "value": 88,
+      "unit": "g",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmass",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvmass_high_m",
+      "value": 224,
+      "unit": "g",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmass",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvmass_low_f",
+      "value": 67,
+      "unit": "g",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmass",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvmass_high_f",
+      "value": 162,
+      "unit": "g",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmass",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "lvmi_low_m",
+      "value": 49,
+      "unit": "gm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmi",
+      "bound": "low",
+      "sex": 1
+    },
+    {
+      "id": "lvmi_high_m",
+      "value": 115,
+      "unit": "gm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmi",
+      "bound": "high",
+      "sex": 1
+    },
+    {
+      "id": "lvmi_low_f",
+      "value": 43,
+      "unit": "gm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmi",
+      "bound": "low",
+      "sex": 2
+    },
+    {
+      "id": "lvmi_high_f",
+      "value": 95,
+      "unit": "gm2",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "lvmi",
+      "bound": "high",
+      "sex": 2
+    },
+    {
+      "id": "rwt_high",
+      "value": 0.42,
+      "unit": "ratio",
+      "sourceId": "ase2015",
+      "decimals": 2,
+      "param": "rwt",
+      "bound": "high"
+    },
+    {
+      "id": "e_sept_low",
+      "value": 7,
+      "unit": "cms",
+      "sourceId": "ase2016",
+      "decimals": 1,
+      "param": "e_sept",
+      "bound": "low"
+    },
+    {
+      "id": "e_lat_low",
+      "value": 10,
+      "unit": "cms",
+      "sourceId": "ase2016",
+      "decimals": 1,
+      "param": "e_lat",
+      "bound": "low"
+    },
+    {
+      "id": "ee_avg_high",
+      "value": 14,
+      "unit": "ratio",
+      "sourceId": "ase2016",
+      "decimals": 1,
+      "param": "ee_avg",
+      "bound": "high"
+    },
+    {
+      "id": "av_vmax_high",
+      "value": 2.5,
+      "unit": "ms",
+      "sourceId": "ase2017as",
+      "decimals": 1,
+      "param": "av_vmax",
+      "bound": "high"
+    },
+    {
+      "id": "trv_high",
+      "value": 2.8,
+      "unit": "ms",
+      "sourceId": "esc2022ph",
+      "decimals": 1,
+      "param": "trv",
+      "bound": "high"
+    },
+    {
+      "id": "rv_basal_high",
+      "value": 41,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "rv_basal",
+      "bound": "high"
+    },
+    {
+      "id": "tapse_low",
+      "value": 17,
+      "unit": "mm",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "tapse",
+      "bound": "low"
+    },
+    {
+      "id": "rv_sprime_low",
+      "value": 9.5,
+      "unit": "cms",
+      "sourceId": "ase2015",
+      "decimals": 1,
+      "param": "rv_sprime",
+      "bound": "low"
+    },
+    {
+      "id": "rv_fac_low",
+      "value": 35,
+      "unit": "pct",
+      "sourceId": "ase2015",
+      "decimals": 0,
+      "param": "rv_fac",
+      "bound": "low"
+    },
+    {
+      "id": "ivc_high",
+      "value": 21,
+      "unit": "mm",
+      "sourceId": "rudski2010",
+      "decimals": 0,
+      "param": "ivc",
+      "bound": "high"
+    },
+    {
+      "id": "ivc_collapse_low",
+      "value": 50,
+      "unit": "pct",
+      "sourceId": "rudski2010",
+      "decimals": 0,
+      "param": "ivc_collapse",
+      "bound": "low"
+    },
+    {
+      "id": "pa_diam_high",
+      "value": 25,
+      "unit": "mm",
+      "sourceId": "esc2015ph",
+      "decimals": 0,
+      "param": "pa_diam",
+      "bound": "high"
+    },
+    {
+      "id": "as_mild",
+      "value": 2.6,
+      "unit": "ms",
+      "sourceId": "ase2017as",
+      "decimals": 1,
+      "labelKey": "thresholds.as_mild"
+    },
+    {
+      "id": "as_moderate",
+      "value": 3.0,
+      "unit": "ms",
+      "sourceId": "ase2017as",
+      "decimals": 1,
+      "labelKey": "thresholds.as_moderate"
+    },
+    {
+      "id": "as_severe",
+      "value": 4.0,
+      "unit": "ms",
+      "sourceId": "ase2017as",
+      "decimals": 1,
+      "labelKey": "thresholds.as_severe"
+    },
+    {
+      "id": "trv_ph_high",
+      "value": 3.4,
+      "unit": "ms",
+      "sourceId": "esc2022ph",
+      "decimals": 1,
+      "labelKey": "thresholds.trv_ph_high"
+    },
+    {
+      "id": "tapse_pasp_low",
+      "value": 0.55,
+      "unit": "ratio",
+      "sourceId": "esc2022ph",
+      "decimals": 2,
+      "labelKey": "thresholds.tapse_pasp_low"
+    },
+    {
+      "id": "peri_moderate",
+      "value": 10,
+      "unit": "mm",
+      "sourceId": "esc2015peri",
+      "decimals": 0,
+      "labelKey": "thresholds.peri_moderate"
+    },
+    {
+      "id": "peri_large",
+      "value": 20,
+      "unit": "mm",
+      "sourceId": "esc2015peri",
+      "decimals": 0,
+      "labelKey": "thresholds.peri_large"
+    },
+    {
+      "id": "dd_ef_cut",
+      "value": 50,
+      "unit": "pct",
+      "sourceId": "ase2016",
+      "decimals": 0,
+      "labelKey": "thresholds.dd_ef_cut"
+    },
+    {
+      "id": "dd_ea_low",
+      "value": 0.8,
+      "unit": "ratio",
+      "sourceId": "ase2016",
+      "decimals": 1,
+      "labelKey": "thresholds.dd_ea_low"
+    },
+    {
+      "id": "dd_ea_high",
+      "value": 2,
+      "unit": "ratio",
+      "sourceId": "ase2016",
+      "decimals": 1,
+      "labelKey": "thresholds.dd_ea_high"
+    },
+    {
+      "id": "dd_e_cut",
+      "value": 50,
+      "unit": "cms",
+      "sourceId": "ase2016",
+      "decimals": 0,
+      "labelKey": "thresholds.dd_e_cut"
+    }
+  ],
+  "order": [
+    [
+      "av_vmax_high",
+      "as_mild"
+    ],
+    [
+      "as_mild",
+      "as_moderate"
+    ],
+    [
+      "as_moderate",
+      "as_severe"
+    ],
+    [
+      "trv_high",
+      "trv_ph_high"
+    ],
+    [
+      "peri_moderate",
+      "peri_large"
+    ],
+    [
+      "dd_ea_low",
+      "dd_ea_high"
+    ],
+    [
+      "lvedd_low_m",
+      "lvedd_high_m"
+    ],
+    [
+      "lvedd_low_f",
+      "lvedd_high_f"
+    ],
+    [
+      "lvesd_low_m",
+      "lvesd_high_m"
+    ],
+    [
+      "lvesd_low_f",
+      "lvesd_high_f"
+    ],
+    [
+      "lvedv_low_m",
+      "lvedv_high_m"
+    ],
+    [
+      "lvedv_low_f",
+      "lvedv_high_f"
+    ],
+    [
+      "lvesv_low_m",
+      "lvesv_high_m"
+    ],
+    [
+      "lvesv_low_f",
+      "lvesv_high_f"
+    ],
+    [
+      "lvedvi_low_m",
+      "lvedvi_high_m"
+    ],
+    [
+      "lvedvi_low_f",
+      "lvedvi_high_f"
+    ],
+    [
+      "lvesvi_low_m",
+      "lvesvi_high_m"
+    ],
+    [
+      "lvesvi_low_f",
+      "lvesvi_high_f"
+    ],
+    [
+      "lvef_low_m",
+      "lvef_high_m"
+    ],
+    [
+      "lvef_low_f",
+      "lvef_high_f"
+    ],
+    [
+      "ivsd_low_m",
+      "ivsd_high_m"
+    ],
+    [
+      "ivsd_low_f",
+      "ivsd_high_f"
+    ],
+    [
+      "pwd_low_m",
+      "pwd_high_m"
+    ],
+    [
+      "pwd_low_f",
+      "pwd_high_f"
+    ],
+    [
+      "lvmass_low_m",
+      "lvmass_high_m"
+    ],
+    [
+      "lvmass_low_f",
+      "lvmass_high_f"
+    ],
+    [
+      "lvmi_low_m",
+      "lvmi_high_m"
+    ],
+    [
+      "lvmi_low_f",
+      "lvmi_high_f"
+    ]
+  ]
+}

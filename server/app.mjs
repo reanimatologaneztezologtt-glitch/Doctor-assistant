@@ -5,6 +5,7 @@ import { extname, join, normalize, resolve } from 'node:path';
 import { createService, ServiceError } from '../js/core/service.js';
 import { validateConfig } from '../js/core/config.js';
 import { buildKnowledge } from '../js/core/ai-guard.js';
+import { resolveParameters } from '../js/core/thresholds.js';
 import { hasher, createSessions, parseCookies } from './auth.mjs';
 import { createRateLimiter, BODY_LIMIT_BYTES } from './limits.mjs';
 import { createAiProxy } from './ai.mjs';
@@ -49,6 +50,7 @@ export function loadAppData(root) {
     parameters: json('data/parameters.json'),
     formulas: index.calculators.map((id) => json(`data/formulas/${id}.json`)),
     dictEn: json('data/i18n/en.json'),
+    thresholds: json('data/thresholds.json'),
   };
 }
 
@@ -56,15 +58,30 @@ export function createApp({ root, store, aiClient = null, now = () => Date.now()
   const data = loadAppData(root);
   const service = createService({
     store, hasher, randomId: randomUUID, now,
-    config: data.config, plans: data.plans, rules: data.rules, specialties: data.specialties,
+    config: data.config, plans: data.plans, rules: data.rules, specialties: data.specialties, thresholds: data.thresholds,
   });
   const sessions = createSessions({ now });
   const apiLimiter = createRateLimiter({ windowMs: 60_000, max: 120, now });
   const loginLimiter = createRateLimiter({ windowMs: 15 * 60_000, max: 10, now });
   const aiIpLimiter = createRateLimiter({ windowMs: 60_000, max: 10, now });
   const aiSessionLimiter = createRateLimiter({ windowMs: 60_000, max: 6, now });
-  const knowledge = buildKnowledge({ sources: data.sources, parameters: data.parameters, formulas: data.formulas, rules: data.rules, dict: data.dictEn });
-  const aiChat = createAiProxy({ client: aiClient, service, knowledge, sourceIds: data.sources.sources.map((s) => s.id), config: data.config });
+  // The knowledge base follows the admin's current cut-offs.
+  let knowledgeCache = { key: null, text: '' };
+  const knowledge = () => {
+    const values = service.effective().thresholds;
+    const key = JSON.stringify(values);
+    if (knowledgeCache.key !== key) {
+      knowledgeCache = {
+        key,
+        text: buildKnowledge({
+          sources: data.sources, parameters: resolveParameters(data.parameters, values), formulas: data.formulas,
+          rules: data.rules, dict: data.dictEn, thresholds: data.thresholds, thresholdValues: values,
+        }),
+      };
+    }
+    return knowledgeCache.text;
+  };
+  const aiChat = createAiProxy({ client: aiClient, service, knowledge, sourceIds: data.sources.sources.map((s) => s.id), getConfig: () => service.effective().config });
   const payments = createPayments({ config: data.config, providers: data.providers });
 
   const send = (res, status, body, headers = {}) => {
@@ -131,6 +148,9 @@ export function createApp({ root, store, aiClient = null, now = () => Date.now()
     ['GET', /^admin\/journal$/, ({ user, url }) => [200, { entries: service.journal(user, url.searchParams.get('kind') || undefined) }]],
     ['POST', /^admin\/refund$/, ({ user, body }) => [200, service.refund(user, body.paymentId)]],
     ['GET', /^admin\/rule-decisions$/, ({ user }) => [200, { decisions: service.ruleDecisions(user) }]],
+    ['GET', /^overrides$/, () => [200, service.overrides()]],
+    ['POST', /^admin\/overrides$/, ({ user, body }) => [200, service.setOverride(user, body.key, body.value)]],
+    ['POST', /^admin\/overrides\/reset$/, ({ user, body }) => [200, service.resetOverride(user, body.key)]],
     ['GET', /^rules\/status$/, () => [200, { statuses: service.ruleStatuses() }]],
     ['POST', /^rules\/([\w-]+)\/decision$/, ({ user, body, m }) => [200, service.decideRule(user, m[1], body.action)]],
     ['POST', /^conclusions\/approve$/, ({ user, body }) => [200, service.approveConclusion(user, body.ruleIds)]],

@@ -12,7 +12,7 @@ const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const [command, email] = process.argv.slice(2);
 const data = loadAppData(root);
 const store = createFileStore(process.env.DATA_FILE || resolve(root, 'server/data/db.json'));
-const service = createService({ store, hasher, randomId: randomUUID, config: data.config, plans: data.plans, rules: data.rules, specialties: data.specialties });
+const service = createService({ store, hasher, randomId: randomUUID, config: data.config, plans: data.plans, rules: data.rules, specialties: data.specialties, thresholds: data.thresholds });
 
 if (command === 'grant-admin' && email) {
   const user = service.grantAdmin(email);

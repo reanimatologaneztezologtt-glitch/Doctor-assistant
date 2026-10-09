@@ -2,13 +2,17 @@ import { createTranslator, pickLanguage } from './core/i18n.js';
 import { validateConfig } from './core/config.js';
 import { readPref, writePref } from './core/storage.js';
 import { runReferenceTests } from './core/calc.js';
+import { applyPlanOverrides, changedIds, resolveFormula, resolveParameters, thresholdValues } from './core/thresholds.js';
 import { createFormatter } from './ui/format.js';
 import { el, icon } from './ui/dom.js';
 import { createBackend } from './api/index.js';
 import { VIEWS } from './views/index.js';
 
 const state = {
-  data: null,
+  base: null, // data as published
+  data: null, // data with admin overrides applied
+  thr: {}, // current cut-off values
+  thrChanged: new Set(),
   lang: null,
   t: (k) => k,
   fmt: null,
@@ -24,10 +28,10 @@ async function loadJson(path) {
 }
 
 async function loadData() {
-  const [config, navigation, parameters, sources, specialties, plans, providers, rules, formulaIndex, demoCase] = await Promise.all([
+  const [config, navigation, parameters, sources, specialties, plans, providers, rules, formulaIndex, demoCase, thresholds] = await Promise.all([
     'config/app.json', 'data/navigation.json', 'data/parameters.json', 'data/sources.json',
     'data/specialties.json', 'data/plans.json', 'data/providers.json', 'data/rules.json',
-    'data/formulas/index.json', 'data/cases/demo-1.json',
+    'data/formulas/index.json', 'data/cases/demo-1.json', 'data/thresholds.json',
   ].map(loadJson));
   const errors = validateConfig(config);
   if (errors.length) throw new Error(`config/app.json: ${errors.join('; ')}`);
@@ -35,7 +39,31 @@ async function loadData() {
   const dicts = Object.fromEntries(await Promise.all(
     config.supportedLanguages.map(async (l) => [l, await loadJson(`data/i18n/${l}.json`)]),
   ));
-  return { config, navigation, parameters, sources, specialties, plans, providers, rules, formulas, demoCase, dicts };
+  return { config, navigation, parameters, sources, specialties, plans, providers, rules, formulas, demoCase, dicts, thresholds };
+}
+
+// Published data + admin overrides -> what every page uses.
+async function applyOverrides() {
+  const ov = await state.api.overrides().catch(() => ({ thresholds: {}, plans: {}, config: {} }));
+  const base = state.base;
+  state.thr = thresholdValues(base.thresholds, ov.thresholds);
+  state.thrChanged = changedIds(base.thresholds, state.thr);
+  state.data = {
+    ...base,
+    config: { ...base.config, ...ov.config },
+    plans: applyPlanOverrides(base.plans, ov.plans),
+    parameters: resolveParameters(base.parameters, state.thr),
+    formulas: base.formulas.map((f) => resolveFormula(f, state.thr)),
+  };
+}
+
+// Cut-offs formatted for the active language, usable as {id} in any text.
+function thresholdTextVars() {
+  const out = {};
+  for (const t of state.base.thresholds.thresholds) {
+    out[t.id] = new Intl.NumberFormat(state.base.dicts[state.lang].meta.htmlLang, { maximumFractionDigits: t.decimals ?? 2 }).format(state.thr[t.id]);
+  }
+  return out;
 }
 
 // ---- measurements (browser only, spec section 8) --------------------------
@@ -53,7 +81,7 @@ function setLanguage(code) {
   const lang = pickLanguage(code, config.supportedLanguages, config.defaultLanguage);
   state.lang = lang;
   state.t = createTranslator(dicts[lang], dicts[config.defaultLanguage], (key) =>
-    console.warn(`i18n: missing key "${key}" for "${lang}"`));
+    console.warn(`i18n: missing key "${key}" for "${lang}"`), thresholdTextVars());
   state.fmt = createFormatter(state.t, dicts[lang].meta.htmlLang);
   writePref('da.lang', lang);
   document.documentElement.lang = state.t('meta.htmlLang');
@@ -172,6 +200,12 @@ function ctx() {
     navigate,
     rerender: () => renderChrome(),
     refreshUser: async () => { await refreshUser(); return renderChrome(); },
+    // After an admin changes a value: reload overrides, rebuild texts, re-render.
+    refreshOverrides: async () => {
+      await applyOverrides();
+      document.getElementById('test-mode-banner').hidden = !state.data.config.testMode;
+      setLanguage(state.lang);
+    },
     readMeasurements,
     writeMeasurements,
     setAssistantDraft: (text) => { state.assistantDraft = text; },
@@ -188,7 +222,8 @@ function initBanners() {
   window.addEventListener('offline', sync);
   sync();
   // Calculator reference tests run on every load; a failure is shown loudly.
-  const failures = state.data.formulas.flatMap(runReferenceTests).filter((r) => !r.pass);
+  const published = thresholdValues(state.base.thresholds);
+  const failures = state.base.formulas.flatMap((f) => runReferenceTests(f, published)).filter((r) => !r.pass);
   state.calcTestFailures = failures;
   if (failures.length) {
     console.error('Calculator reference tests failed', failures);
@@ -204,8 +239,10 @@ function registerServiceWorker() {
 
 async function boot() {
   try {
-    state.data = await loadData();
-    state.api = await createBackend(state.data);
+    state.base = await loadData();
+    state.data = state.base;
+    state.api = await createBackend(state.base);
+    await applyOverrides();
     await refreshUser();
     initThemeSwitch();
     initBanners();

@@ -25,11 +25,12 @@ export function validateInputs(def, raw) {
   return { values, errors };
 }
 
-// Outputs may reference inputs and earlier outputs.
-export function runCalculator(def, raw) {
+// Outputs may reference inputs, earlier outputs and named cut-offs
+// (data/thresholds.json values passed as `thresholds`).
+export function runCalculator(def, raw, thresholds = {}) {
   const { values, errors } = validateInputs(def, raw);
   if (errors.length) return { ok: false, errors, outputs: {} };
-  const scope = { ...values };
+  const scope = { ...thresholds, ...values };
   const outputs = {};
   for (const out of def.outputs) {
     const v = compute(out.expr, scope);
@@ -59,10 +60,11 @@ export function normStatus(norm, value) {
 }
 
 // Reference examples stored with each calculator. A result outside
-// `tolerance` (absolute) is a failure.
-export function runReferenceTests(def) {
+// `tolerance` (absolute) is a failure. They are checked against the published
+// cut-offs (not admin overrides), so they always test the formulas themselves.
+export function runReferenceTests(def, publishedThresholds = {}) {
   return (def.tests || []).flatMap((t, index) => {
-    const result = runCalculator(def, t.inputs);
+    const result = runCalculator(def, t.inputs, publishedThresholds);
     return Object.entries(t.expected).map(([outputId, expected]) => {
       const actual = result.outputs[outputId];
       const pass = result.ok && Math.abs(actual - expected) <= t.tolerance;

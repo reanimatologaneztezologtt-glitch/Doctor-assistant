@@ -1,25 +1,91 @@
 {
   "id": "diastolic",
   "group": "diastolic",
-  "sourceIds": ["ase2016"],
+  "sourceIds": [
+    "ase2016"
+  ],
   "formula": "E/A = E / A;  e′ (average) = (e′ septal + e′ lateral) / 2;  E/e′ = E / e′ (average)",
   "inputs": [
-    { "id": "e_vel", "unit": "cms", "min": 10, "max": 250, "step": 1 },
-    { "id": "a_vel", "unit": "cms", "min": 10, "max": 250, "step": 1 },
-    { "id": "e_sept", "unit": "cms", "min": 1, "max": 30, "step": 0.1 },
-    { "id": "e_lat", "unit": "cms", "min": 1, "max": 30, "step": 0.1 }
+    {
+      "id": "e_vel",
+      "unit": "cms",
+      "min": 10,
+      "max": 250,
+      "step": 1
+    },
+    {
+      "id": "a_vel",
+      "unit": "cms",
+      "min": 10,
+      "max": 250,
+      "step": 1
+    },
+    {
+      "id": "e_sept",
+      "unit": "cms",
+      "min": 1,
+      "max": 30,
+      "step": 0.1
+    },
+    {
+      "id": "e_lat",
+      "unit": "cms",
+      "min": 1,
+      "max": 30,
+      "step": 0.1
+    }
   ],
   "outputs": [
-    { "id": "ea", "expr": "e_vel/a_vel", "unit": "ratio", "decimals": 2 },
-    { "id": "eprime_avg", "expr": "(e_sept+e_lat)/2", "unit": "cms", "decimals": 1 },
-    { "id": "ee_avg", "expr": "e_vel/eprime_avg", "unit": "ratio", "decimals": 1 }
+    {
+      "id": "ea",
+      "expr": "e_vel/a_vel",
+      "unit": "ratio",
+      "decimals": 2
+    },
+    {
+      "id": "eprime_avg",
+      "expr": "(e_sept+e_lat)/2",
+      "unit": "cms",
+      "decimals": 1
+    },
+    {
+      "id": "ee_avg",
+      "expr": "e_vel/eprime_avg",
+      "unit": "ratio",
+      "decimals": 1
+    }
   ],
   "norms": [
-    { "output": "ee_avg", "high": 14, "sourceId": "ase2016" },
-    { "output": "e_sept", "low": 7, "sourceId": "ase2016" },
-    { "output": "e_lat", "low": 10, "sourceId": "ase2016" }
+    {
+      "output": "ee_avg",
+      "high": "ee_avg_high",
+      "sourceId": "ase2016"
+    },
+    {
+      "output": "e_sept",
+      "low": "e_sept_low",
+      "sourceId": "ase2016"
+    },
+    {
+      "output": "e_lat",
+      "low": "e_lat_low",
+      "sourceId": "ase2016"
+    }
   ],
   "tests": [
-    { "inputs": { "e_vel": 80, "a_vel": 60, "e_sept": 8, "e_lat": 12 }, "expected": { "ea": 1.3333, "eprime_avg": 10, "ee_avg": 8 }, "tolerance": 0.001 }
+    {
+      "inputs": {
+        "e_vel": 80,
+        "a_vel": 60,
+        "e_sept": 8,
+        "e_lat": 12
+      },
+      "expected": {
+        "ea": 1.3333,
+        "eprime_avg": 10,
+        "ee_avg": 8
+      },
+      "tolerance": 0.001
+    }
   ]
 }

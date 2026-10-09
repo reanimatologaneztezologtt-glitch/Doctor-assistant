@@ -388,3 +388,7 @@ td { font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+input.input--narrow { width: 7.5rem; }
+.limits-group { margin-bottom: var(--space-3); }
+.limits-group > summary { padding: var(--space-2) 0; }
+.nowrap { white-space: nowrap; }

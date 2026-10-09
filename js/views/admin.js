@@ -1,8 +1,9 @@
 import { el, chip } from '../ui/dom.js';
 import { alertBox, errorText, formatDate, sourceShort, specialtyName } from './common.js';
 import { deciderLabel, ruleDecisionButtons, ruleStatusChip } from './conclusion.js';
+import { renderLimits } from './admin-limits.js';
 
-const KINDS = ['', 'verification', 'approval', 'registration', 'answer', 'payment', 'admin'];
+const KINDS = ['', 'verification', 'approval', 'settings', 'registration', 'answer', 'payment', 'admin'];
 
 export async function renderAdmin(ctx) {
   const { t, user, data } = ctx;
@@ -78,7 +79,6 @@ export async function renderAdmin(ctx) {
     ]))),
   ])]) : el('p', { class: 'text-muted', text: t('journal.empty') });
 
-  const flags = data.config;
   return [
     ...head,
     el('p', { class: 'text-muted', text: t('admin.note') }),
@@ -90,10 +90,6 @@ export async function renderAdmin(ctx) {
       el('label', { for: 'journal-kind', text: t('journal.filter') }), kindSelect,
       journalBox,
     ]),
-    el('section', { class: 'card' }, [
-      el('h2', { text: t('admin.settings') }),
-      el('ul', { class: 'list' }, ['testMode', 'paymentsEnabled', 'aiEnabled'].map((k) => el('li', {}, [el('code', { text: k }), `: ${flags[k] ? t('admin.on') : t('admin.off')}`]))),
-      el('p', { class: 'text-muted', text: t('admin.settingsNote') }),
-    ]),
+    renderLimits(ctx),
   ];
 }

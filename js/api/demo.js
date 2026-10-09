@@ -5,6 +5,7 @@
 import { createService, ServiceError } from '../core/service.js';
 import { createStore } from '../core/store.js';
 import { buildKnowledge, buildSystemPrompt, checkAnswer, detectInjection, validateChat } from '../core/ai-guard.js';
+import { resolveParameters } from '../core/thresholds.js';
 
 const DB_KEY = 'da.demo.db';
 const SESSION_KEY = 'da.demo.session';
@@ -69,7 +70,7 @@ export async function createDemoBackend({ data }) {
   const store = createStore(initial, (snap) => writeLocal(DB_KEY, JSON.stringify(snap)));
   const service = createService({
     store, hasher, randomId,
-    config: data.config, plans: data.plans, rules: data.rules, specialties: data.specialties,
+    config: data.config, plans: data.plans, rules: data.rules, specialties: data.specialties, thresholds: data.thresholds,
   });
 
   // Seed demo accounts once.
@@ -125,6 +126,9 @@ export async function createDemoBackend({ data }) {
     listQuestions: wrap(async () => service.listQuestions(actor())),
     answerQuestion: wrap(async (id, text) => service.answerQuestion(actor(), id, text)),
     plans: wrap(async () => service.plans()),
+    overrides: wrap(async () => service.overrides()),
+    setOverride: wrap(async (key, value) => service.setOverride(actor(), key, value)),
+    resetOverride: wrap(async (key) => service.resetOverride(actor(), key)),
     aiQuota: wrap(async () => service.aiQuota(actor())),
     cancelSubscription: wrap(async () => service.cancelSubscription(actor())),
     startCheckout: wrap(async (planId, providerId) => service.startCheckout(actor(), { planId, providerId })),
@@ -132,7 +136,8 @@ export async function createDemoBackend({ data }) {
     askAI: wrap(async (messages, lang, { onText, signal } = {}) => {
       const user = actor();
       if (!user) throw { code: 'notSignedIn' };
-      if (!data.config.aiEnabled) throw { code: 'aiDisabled' };
+      const eff = service.effective();
+      if (!eff.config.aiEnabled) throw { code: 'aiDisabled' };
       const invalid = validateChat(messages);
       if (invalid) throw { code: invalid };
       const quota = service.aiQuota(user);
@@ -144,7 +149,10 @@ export async function createDemoBackend({ data }) {
       }
       const sample = await getSample();
       if (!sample) throw { code: 'aiUnavailable' };
-      const knowledge = buildKnowledge({ ...data, dict: data.dicts.en });
+      const knowledge = buildKnowledge({
+        sources: data.sources, parameters: resolveParameters(data.parameters, eff.thresholds), formulas: data.formulas,
+        rules: data.rules, dict: data.dicts.en, thresholds: data.thresholds, thresholdValues: eff.thresholds,
+      });
       const rules = buildSystemPrompt(knowledge, lang);
       let text;
       try {

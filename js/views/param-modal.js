@@ -3,7 +3,7 @@
 import { el } from '../ui/dom.js';
 import { openModal } from '../ui/modal.js';
 import { sourceCitation, sourceShort } from './common.js';
-import { paramAbbr, paramName } from './param-text.js';
+import { normChangedNote, paramAbbr, paramName } from './param-text.js';
 
 const diagramCache = new Map();
 
@@ -23,7 +23,7 @@ function normsList(ctx, param) {
   const { t, fmt } = ctx;
   if (!param.norms || !param.norms.length) return el('p', { text: t(`params.${param.id}.normNote`).startsWith('[') ? t('norm.none') : t(`params.${param.id}.normNote`) });
   return el('ul', { class: 'list' }, param.norms.map((n) => el('li', {
-    text: `${n.sex ? `${fmt.sexLabel(n.sex)}: ` : ''}${fmt.normRange(n, param.unit, 2)}`,
+    text: `${n.sex ? `${fmt.sexLabel(n.sex)}: ` : ''}${fmt.normRange(n, param.unit, 2)}${normChangedNote(ctx, n, param.unit)}`,
   })));
 }
 

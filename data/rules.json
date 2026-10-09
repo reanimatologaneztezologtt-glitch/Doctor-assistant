@@ -1,80 +1,344 @@
 {
-  "note": "Rules for DRAFT conclusions. Sex codes: 1 = male, 2 = female. Each rule needs approval by a verified doctor of its specialty.",
+  "note": "Rules for DRAFT conclusions. Sex codes: 1 = male, 2 = female. Cut-offs are named values from data/thresholds.json. Each rule needs approval by a verified doctor of its specialty or an admin.",
   "rules": [
-    { "id": "lvef_reduced", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["lvef", "sex"], "when": "lvef < if(sex==1, 52, 54)" },
-
-    { "id": "lv_concentric_remodeling", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["lvmi", "rwt", "sex"], "when": "lvmi <= if(sex==1, 115, 95) && rwt > 0.42" },
-    { "id": "lv_eccentric_hypertrophy", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["lvmi", "rwt", "sex"], "when": "lvmi > if(sex==1, 115, 95) && rwt <= 0.42" },
-    { "id": "lv_concentric_hypertrophy", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["lvmi", "rwt", "sex"], "when": "lvmi > if(sex==1, 115, 95) && rwt > 0.42" },
-
-    { "id": "la_enlarged", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["lavi"], "when": "lavi > 34" },
-
-    { "id": "dd_preserved_ef_normal", "specialty": "cardiology", "sourceId": "ase2016", "severity": "info",
-      "requires": ["lvef", "ee_avg", "e_sept", "e_lat", "trv", "lavi"],
-      "when": "lvef >= 50 && ((ee_avg > 14) + (e_sept < 7 || e_lat < 10) + (trv > 2.8) + (lavi > 34)) <= 1" },
-    { "id": "dd_preserved_ef_indeterminate", "specialty": "cardiology", "sourceId": "ase2016", "severity": "info",
-      "requires": ["lvef", "ee_avg", "e_sept", "e_lat", "trv", "lavi"],
-      "when": "lvef >= 50 && ((ee_avg > 14) + (e_sept < 7 || e_lat < 10) + (trv > 2.8) + (lavi > 34)) == 2" },
-    { "id": "dd_preserved_ef_dysfunction", "specialty": "cardiology", "sourceId": "ase2016", "severity": "abnormal",
-      "requires": ["lvef", "ee_avg", "e_sept", "e_lat", "trv", "lavi"],
-      "when": "lvef >= 50 && ((ee_avg > 14) + (e_sept < 7 || e_lat < 10) + (trv > 2.8) + (lavi > 34)) >= 3" },
-
-    { "id": "dd_reduced_ef_grade1", "specialty": "cardiology", "sourceId": "ase2016", "severity": "abnormal",
-      "requires": ["lvef", "ea", "e_vel"], "when": "lvef < 50 && ea <= 0.8 && e_vel <= 50" },
-    { "id": "dd_reduced_ef_grade3", "specialty": "cardiology", "sourceId": "ase2016", "severity": "abnormal",
-      "requires": ["lvef", "ea"], "when": "lvef < 50 && ea >= 2" },
-    { "id": "dd_reduced_ef_grade1_by_criteria", "specialty": "cardiology", "sourceId": "ase2016", "severity": "abnormal",
-      "requires": ["lvef", "ea", "e_vel", "ee_avg", "trv", "lavi"],
-      "when": "lvef < 50 && ((ea <= 0.8 && e_vel > 50) || (ea > 0.8 && ea < 2)) && ((ee_avg > 14) + (trv > 2.8) + (lavi > 34)) <= 1" },
-    { "id": "dd_reduced_ef_grade2", "specialty": "cardiology", "sourceId": "ase2016", "severity": "abnormal",
-      "requires": ["lvef", "ea", "e_vel", "ee_avg", "trv", "lavi"],
-      "when": "lvef < 50 && ((ea <= 0.8 && e_vel > 50) || (ea > 0.8 && ea < 2)) && ((ee_avg > 14) + (trv > 2.8) + (lavi > 34)) >= 2" },
-
-    { "id": "ph_trv_low", "specialty": "cardiology", "sourceId": "esc2022ph", "severity": "info",
-      "requires": ["trv"], "when": "trv <= 2.8" },
-    { "id": "ph_trv_intermediate", "specialty": "cardiology", "sourceId": "esc2022ph", "severity": "abnormal",
-      "requires": ["trv"], "when": "trv > 2.8 && trv <= 3.4" },
-    { "id": "ph_trv_high", "specialty": "cardiology", "sourceId": "esc2022ph", "severity": "abnormal",
-      "requires": ["trv"], "when": "trv > 3.4" },
-    { "id": "tapse_pasp_low", "specialty": "cardiology", "sourceId": "esc2022ph", "severity": "abnormal",
-      "requires": ["tapse", "pasp"], "when": "tapse / pasp < 0.55" },
-
-    { "id": "rv_dilated", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["rv_basal"], "when": "rv_basal > 41" },
-    { "id": "rv_dysfunction_tapse", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["tapse"], "when": "tapse < 17" },
-    { "id": "rv_dysfunction_sprime", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["rv_sprime"], "when": "rv_sprime < 9.5" },
-    { "id": "rv_dysfunction_fac", "specialty": "cardiology", "sourceId": "ase2015", "severity": "abnormal",
-      "requires": ["rv_fac"], "when": "rv_fac < 35" },
-
-    { "id": "rap_normal", "specialty": "cardiology", "sourceId": "rudski2010", "severity": "info",
-      "requires": ["ivc", "ivc_collapse"], "when": "ivc <= 21 && ivc_collapse > 50" },
-    { "id": "rap_intermediate", "specialty": "cardiology", "sourceId": "rudski2010", "severity": "info",
-      "requires": ["ivc", "ivc_collapse"], "when": "!(ivc <= 21 && ivc_collapse > 50) && !(ivc > 21 && ivc_collapse < 50)" },
-    { "id": "rap_high", "specialty": "cardiology", "sourceId": "rudski2010", "severity": "abnormal",
-      "requires": ["ivc", "ivc_collapse"], "when": "ivc > 21 && ivc_collapse < 50" },
-
-    { "id": "peri_small", "specialty": "cardiology", "sourceId": "esc2015peri", "severity": "abnormal",
-      "requires": ["peri"], "when": "peri > 0 && peri < 10" },
-    { "id": "peri_moderate", "specialty": "cardiology", "sourceId": "esc2015peri", "severity": "abnormal",
-      "requires": ["peri"], "when": "peri >= 10 && peri <= 20" },
-    { "id": "peri_large", "specialty": "cardiology", "sourceId": "esc2015peri", "severity": "abnormal",
-      "requires": ["peri"], "when": "peri > 20" },
-
-    { "id": "as_mild", "specialty": "cardiology", "sourceId": "ase2017as", "severity": "abnormal",
-      "requires": ["av_vmax"], "when": "av_vmax >= 2.6 && av_vmax < 3.0" },
-    { "id": "as_moderate", "specialty": "cardiology", "sourceId": "ase2017as", "severity": "abnormal",
-      "requires": ["av_vmax"], "when": "av_vmax >= 3.0 && av_vmax < 4.0" },
-    { "id": "as_severe", "specialty": "cardiology", "sourceId": "ase2017as", "severity": "abnormal",
-      "requires": ["av_vmax"], "when": "av_vmax >= 4.0" },
-
-    { "id": "pa_dilated", "specialty": "cardiology", "sourceId": "esc2015ph", "severity": "abnormal",
-      "requires": ["pa_diam"], "when": "pa_diam > 25" }
+    {
+      "id": "lvef_reduced",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "lvef",
+        "sex"
+      ],
+      "when": "lvef < if(sex==1, lvef_low_m, lvef_low_f)"
+    },
+    {
+      "id": "lv_concentric_remodeling",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "lvmi",
+        "rwt",
+        "sex"
+      ],
+      "when": "lvmi <= if(sex==1, lvmi_high_m, lvmi_high_f) && rwt > rwt_high"
+    },
+    {
+      "id": "lv_eccentric_hypertrophy",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "lvmi",
+        "rwt",
+        "sex"
+      ],
+      "when": "lvmi > if(sex==1, lvmi_high_m, lvmi_high_f) && rwt <= rwt_high"
+    },
+    {
+      "id": "lv_concentric_hypertrophy",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "lvmi",
+        "rwt",
+        "sex"
+      ],
+      "when": "lvmi > if(sex==1, lvmi_high_m, lvmi_high_f) && rwt > rwt_high"
+    },
+    {
+      "id": "la_enlarged",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "lavi"
+      ],
+      "when": "lavi > lavi_high"
+    },
+    {
+      "id": "dd_preserved_ef_normal",
+      "specialty": "cardiology",
+      "sourceId": "ase2016",
+      "severity": "info",
+      "requires": [
+        "lvef",
+        "ee_avg",
+        "e_sept",
+        "e_lat",
+        "trv",
+        "lavi"
+      ],
+      "when": "lvef >= dd_ef_cut && ((ee_avg > ee_avg_high) + (e_sept < e_sept_low || e_lat < e_lat_low) + (trv > trv_high) + (lavi > lavi_high)) <= 1"
+    },
+    {
+      "id": "dd_preserved_ef_indeterminate",
+      "specialty": "cardiology",
+      "sourceId": "ase2016",
+      "severity": "info",
+      "requires": [
+        "lvef",
+        "ee_avg",
+        "e_sept",
+        "e_lat",
+        "trv",
+        "lavi"
+      ],
+      "when": "lvef >= dd_ef_cut && ((ee_avg > ee_avg_high) + (e_sept < e_sept_low || e_lat < e_lat_low) + (trv > trv_high) + (lavi > lavi_high)) == 2"
+    },
+    {
+      "id": "dd_preserved_ef_dysfunction",
+      "specialty": "cardiology",
+      "sourceId": "ase2016",
+      "severity": "abnormal",
+      "requires": [
+        "lvef",
+        "ee_avg",
+        "e_sept",
+        "e_lat",
+        "trv",
+        "lavi"
+      ],
+      "when": "lvef >= dd_ef_cut && ((ee_avg > ee_avg_high) + (e_sept < e_sept_low || e_lat < e_lat_low) + (trv > trv_high) + (lavi > lavi_high)) >= 3"
+    },
+    {
+      "id": "dd_reduced_ef_grade1",
+      "specialty": "cardiology",
+      "sourceId": "ase2016",
+      "severity": "abnormal",
+      "requires": [
+        "lvef",
+        "ea",
+        "e_vel"
+      ],
+      "when": "lvef < dd_ef_cut && ea <= dd_ea_low && e_vel <= dd_e_cut"
+    },
+    {
+      "id": "dd_reduced_ef_grade3",
+      "specialty": "cardiology",
+      "sourceId": "ase2016",
+      "severity": "abnormal",
+      "requires": [
+        "lvef",
+        "ea"
+      ],
+      "when": "lvef < dd_ef_cut && ea >= dd_ea_high"
+    },
+    {
+      "id": "dd_reduced_ef_grade1_by_criteria",
+      "specialty": "cardiology",
+      "sourceId": "ase2016",
+      "severity": "abnormal",
+      "requires": [
+        "lvef",
+        "ea",
+        "e_vel",
+        "ee_avg",
+        "trv",
+        "lavi"
+      ],
+      "when": "lvef < dd_ef_cut && ((ea <= dd_ea_low && e_vel > dd_e_cut) || (ea > dd_ea_low && ea < dd_ea_high)) && ((ee_avg > ee_avg_high) + (trv > trv_high) + (lavi > lavi_high)) <= 1"
+    },
+    {
+      "id": "dd_reduced_ef_grade2",
+      "specialty": "cardiology",
+      "sourceId": "ase2016",
+      "severity": "abnormal",
+      "requires": [
+        "lvef",
+        "ea",
+        "e_vel",
+        "ee_avg",
+        "trv",
+        "lavi"
+      ],
+      "when": "lvef < dd_ef_cut && ((ea <= dd_ea_low && e_vel > dd_e_cut) || (ea > dd_ea_low && ea < dd_ea_high)) && ((ee_avg > ee_avg_high) + (trv > trv_high) + (lavi > lavi_high)) >= 2"
+    },
+    {
+      "id": "ph_trv_low",
+      "specialty": "cardiology",
+      "sourceId": "esc2022ph",
+      "severity": "info",
+      "requires": [
+        "trv"
+      ],
+      "when": "trv <= trv_high"
+    },
+    {
+      "id": "ph_trv_intermediate",
+      "specialty": "cardiology",
+      "sourceId": "esc2022ph",
+      "severity": "abnormal",
+      "requires": [
+        "trv"
+      ],
+      "when": "trv > trv_high && trv <= trv_ph_high"
+    },
+    {
+      "id": "ph_trv_high",
+      "specialty": "cardiology",
+      "sourceId": "esc2022ph",
+      "severity": "abnormal",
+      "requires": [
+        "trv"
+      ],
+      "when": "trv > trv_ph_high"
+    },
+    {
+      "id": "tapse_pasp_low",
+      "specialty": "cardiology",
+      "sourceId": "esc2022ph",
+      "severity": "abnormal",
+      "requires": [
+        "tapse",
+        "pasp"
+      ],
+      "when": "tapse / pasp < tapse_pasp_low"
+    },
+    {
+      "id": "rv_dilated",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "rv_basal"
+      ],
+      "when": "rv_basal > rv_basal_high"
+    },
+    {
+      "id": "rv_dysfunction_tapse",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "tapse"
+      ],
+      "when": "tapse < tapse_low"
+    },
+    {
+      "id": "rv_dysfunction_sprime",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "rv_sprime"
+      ],
+      "when": "rv_sprime < rv_sprime_low"
+    },
+    {
+      "id": "rv_dysfunction_fac",
+      "specialty": "cardiology",
+      "sourceId": "ase2015",
+      "severity": "abnormal",
+      "requires": [
+        "rv_fac"
+      ],
+      "when": "rv_fac < rv_fac_low"
+    },
+    {
+      "id": "rap_normal",
+      "specialty": "cardiology",
+      "sourceId": "rudski2010",
+      "severity": "info",
+      "requires": [
+        "ivc",
+        "ivc_collapse"
+      ],
+      "when": "ivc <= ivc_high && ivc_collapse > ivc_collapse_low"
+    },
+    {
+      "id": "rap_intermediate",
+      "specialty": "cardiology",
+      "sourceId": "rudski2010",
+      "severity": "info",
+      "requires": [
+        "ivc",
+        "ivc_collapse"
+      ],
+      "when": "!(ivc <= ivc_high && ivc_collapse > ivc_collapse_low) && !(ivc > ivc_high && ivc_collapse < ivc_collapse_low)"
+    },
+    {
+      "id": "rap_high",
+      "specialty": "cardiology",
+      "sourceId": "rudski2010",
+      "severity": "abnormal",
+      "requires": [
+        "ivc",
+        "ivc_collapse"
+      ],
+      "when": "ivc > ivc_high && ivc_collapse < ivc_collapse_low"
+    },
+    {
+      "id": "peri_small",
+      "specialty": "cardiology",
+      "sourceId": "esc2015peri",
+      "severity": "abnormal",
+      "requires": [
+        "peri"
+      ],
+      "when": "peri > 0 && peri < peri_moderate"
+    },
+    {
+      "id": "peri_moderate",
+      "specialty": "cardiology",
+      "sourceId": "esc2015peri",
+      "severity": "abnormal",
+      "requires": [
+        "peri"
+      ],
+      "when": "peri >= peri_moderate && peri <= peri_large"
+    },
+    {
+      "id": "peri_large",
+      "specialty": "cardiology",
+      "sourceId": "esc2015peri",
+      "severity": "abnormal",
+      "requires": [
+        "peri"
+      ],
+      "when": "peri > peri_large"
+    },
+    {
+      "id": "as_mild",
+      "specialty": "cardiology",
+      "sourceId": "ase2017as",
+      "severity": "abnormal",
+      "requires": [
+        "av_vmax"
+      ],
+      "when": "av_vmax >= as_mild && av_vmax < as_moderate"
+    },
+    {
+      "id": "as_moderate",
+      "specialty": "cardiology",
+      "sourceId": "ase2017as",
+      "severity": "abnormal",
+      "requires": [
+        "av_vmax"
+      ],
+      "when": "av_vmax >= as_moderate && av_vmax < as_severe"
+    },
+    {
+      "id": "as_severe",
+      "specialty": "cardiology",
+      "sourceId": "ase2017as",
+      "severity": "abnormal",
+      "requires": [
+        "av_vmax"
+      ],
+      "when": "av_vmax >= as_severe"
+    },
+    {
+      "id": "pa_dilated",
+      "specialty": "cardiology",
+      "sourceId": "esc2015ph",
+      "severity": "abnormal",
+      "requires": [
+        "pa_diam"
+      ],
+      "when": "pa_diam > pa_diam_high"
+    }
   ]
 }

@@ -11,7 +11,8 @@ export function interpolate(template, vars = {}) {
 
 // Missing keys fall back to `fallback` dictionary, then to the key in brackets
 // so that a gap is visible instead of silently empty.
-export function createTranslator(dict, fallback = null, onMissing = () => {}) {
+// `defaults` fills placeholders that every text may use (e.g. current cut-offs).
+export function createTranslator(dict, fallback = null, onMissing = () => {}, defaults = {}) {
   return function t(key, vars) {
     let value = getByPath(dict, key);
     if (typeof value !== 'string' && fallback) {
@@ -21,7 +22,7 @@ export function createTranslator(dict, fallback = null, onMissing = () => {}) {
       onMissing(key);
       return `[${key}]`;
     }
-    return interpolate(value, vars);
+    return interpolate(value, vars ? { ...defaults, ...vars } : defaults);
   };
 }
 

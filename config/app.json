@@ -5,7 +5,14 @@
   "paymentsEnabled": false,
   "aiEnabled": true,
   "defaultLanguage": "uz",
-  "supportedLanguages": ["uz", "ru", "en"],
+  "supportedLanguages": [
+    "uz",
+    "ru",
+    "en"
+  ],
   "defaultTheme": "system",
-  "defaultPlan": "free"
+  "defaultPlan": "free",
+  "adminLimits": {
+    "maxDeviationPct": 20
+  }
 }

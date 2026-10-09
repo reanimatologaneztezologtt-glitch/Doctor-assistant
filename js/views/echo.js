@@ -10,7 +10,7 @@ export function renderEcho(ctx) {
   const outputs = new Map();
 
   function recompute() {
-    const { values, derived } = computeMeasurements(data.parameters, raw);
+    const { values, derived } = computeMeasurements(data.parameters, raw, ctx.thr);
     const sex = values.sex;
     for (const [id, box] of outputs) {
       const param = box.param;

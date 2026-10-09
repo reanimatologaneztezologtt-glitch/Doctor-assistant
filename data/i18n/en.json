@@ -80,7 +80,8 @@
     "label": "reference",
     "men": "men",
     "women": "women",
-    "none": "No single reference value — see the \"?\" explanation"
+    "none": "No single reference value — see the \"?\" explanation",
+    "changedByAdmin": "changed by admin (published: {published})"
   },
   "status": {
     "low": "Below reference",
@@ -209,7 +210,7 @@
       "abbr": "LAVi",
       "def": "LA volume divided by body surface area.",
       "method": "Calculated from LAV and BSA or entered directly.",
-      "significance": "A value above 34 mL/m² indicates LA enlargement; used in the diastolic function algorithm (ASE/EACVI 2016)."
+      "significance": "A value above {lavi_high} mL/m² indicates LA enlargement; used in the diastolic function algorithm (ASE/EACVI 2016)."
     },
     "ivsd": {
       "name": "Interventricular septal thickness in diastole",
@@ -244,7 +245,7 @@
       "abbr": "RWT",
       "def": "RWT = 2 × PWd / LVIDd.",
       "method": "Calculated automatically from PWd and LVIDd.",
-      "significance": "A value above 0.42 indicates concentric geometry (ASE/EACVI 2015)."
+      "significance": "A value above {rwt_high} indicates concentric geometry (ASE/EACVI 2015)."
     },
     "e_vel": {
       "name": "Mitral E velocity",
@@ -252,7 +253,7 @@
       "def": "Peak early diastolic mitral inflow velocity.",
       "method": "Pulsed-wave Doppler in the apical four-chamber view, sample volume between the mitral leaflet tips.",
       "significance": "Used to calculate E/A and E/e′ (ASE/EACVI 2016).",
-      "normNote": "No single reference value: age-dependent. With reduced EF the algorithm cut-off is E ≤ 50 cm/s (ASE/EACVI 2016)."
+      "normNote": "No single reference value: age-dependent. With reduced EF the algorithm cut-off is E ≤ {dd_e_cut} cm/s (ASE/EACVI 2016)."
     },
     "a_vel": {
       "name": "Mitral A velocity",
@@ -267,49 +268,49 @@
       "abbr": "E/A",
       "def": "Ratio of E velocity to A velocity.",
       "method": "Calculated from E and A or entered directly.",
-      "significance": "With reduced EF: E/A ≤ 0.8 with E ≤ 50 cm/s means normal LA pressure (grade I); E/A ≥ 2 means elevated pressure (grade III) (ASE/EACVI 2016).",
-      "normNote": "No single reference value: age-dependent; algorithm cut-offs 0.8 and 2 (ASE/EACVI 2016)."
+      "significance": "With reduced EF: E/A ≤ {dd_ea_low} with E ≤ {dd_e_cut} cm/s means normal LA pressure (grade I); E/A ≥ {dd_ea_high} means elevated pressure (grade III) (ASE/EACVI 2016).",
+      "normNote": "No single reference value: age-dependent; algorithm cut-offs {dd_ea_low} and {dd_ea_high} (ASE/EACVI 2016)."
     },
     "e_sept": {
       "name": "Septal e′ velocity",
       "abbr": "septal e′",
       "def": "Early diastolic velocity of the septal mitral annulus.",
       "method": "Tissue Doppler in the apical four-chamber view, sample volume at the septal annulus.",
-      "significance": "A value below 7 cm/s indicates impaired myocardial relaxation (ASE/EACVI 2016)."
+      "significance": "A value below {e_sept_low} cm/s indicates impaired myocardial relaxation (ASE/EACVI 2016)."
     },
     "e_lat": {
       "name": "Lateral e′ velocity",
       "abbr": "lateral e′",
       "def": "Early diastolic velocity of the lateral mitral annulus.",
       "method": "Tissue Doppler in the apical four-chamber view, sample volume at the lateral annulus.",
-      "significance": "A value below 10 cm/s indicates impaired relaxation (ASE/EACVI 2016)."
+      "significance": "A value below {e_lat_low} cm/s indicates impaired relaxation (ASE/EACVI 2016)."
     },
     "ee_avg": {
       "name": "Average E/e′ ratio",
       "abbr": "E/e′",
       "def": "E velocity divided by the mean of septal and lateral e′.",
       "method": "Calculated from E and both e′ values or entered directly.",
-      "significance": "A value above 14 is one criterion of elevated LV filling pressure (ASE/EACVI 2016)."
+      "significance": "A value above {ee_avg_high} is one criterion of elevated LV filling pressure (ASE/EACVI 2016)."
     },
     "av_vmax": {
       "name": "Peak aortic jet velocity",
       "abbr": "AV Vmax",
       "def": "Maximal systolic velocity across the aortic valve.",
       "method": "Continuous-wave Doppler from several windows (apical, right parasternal and others); the highest value is taken.",
-      "significance": "Used to grade aortic stenosis: 2.6–2.9 m/s mild, 3.0–3.9 m/s moderate, ≥ 4.0 m/s severe (EACVI/ASE 2017). Severity is assessed together with gradient and valve area."
+      "significance": "Used to grade aortic stenosis: ≥ {as_mild} m/s mild, ≥ {as_moderate} m/s moderate, ≥ {as_severe} m/s severe (EACVI/ASE 2017). Severity is assessed together with gradient and valve area."
     },
     "trv": {
       "name": "Peak tricuspid regurgitation velocity",
       "abbr": "TRV",
       "def": "Peak systolic velocity of the tricuspid regurgitant jet.",
       "method": "Continuous-wave Doppler aligned with the jet; the best envelope from several views is used.",
-      "significance": "A value above 2.8 m/s raises the probability of pulmonary hypertension (ESC/ERS 2022); also used in the diastolic function algorithm (ASE/EACVI 2016)."
+      "significance": "A value above {trv_high} m/s raises the probability of pulmonary hypertension (ESC/ERS 2022); also used in the diastolic function algorithm (ASE/EACVI 2016)."
     },
     "rap": {
       "name": "Right atrial pressure (estimate)",
       "abbr": "RAP",
       "def": "Pressure estimated from IVC diameter and inspiratory collapse.",
-      "method": "IVC ≤ 21 mm with collapse > 50%: 3 mmHg; IVC > 21 mm with collapse < 50%: 15 mmHg; otherwise 8 mmHg.",
+      "method": "IVC ≤ {ivc_high} mm with collapse > {ivc_collapse_low}%: 3 mmHg; IVC > {ivc_high} mm with collapse < {ivc_collapse_low}%: 15 mmHg; otherwise 8 mmHg.",
       "significance": "Used to calculate PASP.",
       "normNote": "Three estimate levels: 3, 8 or 15 mmHg (ASE 2010, Rudski)."
     },
@@ -319,35 +320,35 @@
       "def": "PASP = 4 × v² + RAP, where v is the peak tricuspid regurgitation velocity.",
       "method": "Calculated from TRV and RAP or entered directly. Assumes no pulmonary stenosis.",
       "significance": "ESC/ERS 2022 recommend grading the probability of pulmonary hypertension by TRV rather than PASP.",
-      "normNote": "No single reference value: ESC/ERS 2022 use the TRV cut-off (2.8 m/s)."
+      "normNote": "No single reference value: ESC/ERS 2022 use the TRV cut-off ({trv_high} m/s)."
     },
     "rv_basal": {
       "name": "RV basal diameter",
       "abbr": "RVD1",
       "def": "Maximal transverse dimension of the basal third of the RV at end-diastole.",
       "method": "Measured in the RV-focused apical four-chamber view.",
-      "significance": "A value above 41 mm indicates RV dilation (ASE/EACVI 2015)."
+      "significance": "A value above {rv_basal_high} mm indicates RV dilation (ASE/EACVI 2015)."
     },
     "tapse": {
       "name": "Tricuspid annular plane systolic excursion",
       "abbr": "TAPSE",
       "def": "Longitudinal systolic displacement of the lateral tricuspid annulus.",
       "method": "M-mode in the apical four-chamber view with the cursor aligned to annular motion.",
-      "significance": "A value below 17 mm indicates RV systolic dysfunction (ASE/EACVI 2015)."
+      "significance": "A value below {tapse_low} mm indicates RV systolic dysfunction (ASE/EACVI 2015)."
     },
     "rv_sprime": {
       "name": "RV S′ velocity",
       "abbr": "S′",
       "def": "Systolic tissue Doppler velocity of the lateral tricuspid annulus.",
       "method": "Pulsed tissue Doppler in the apical four-chamber view.",
-      "significance": "A value below 9.5 cm/s indicates RV systolic dysfunction (ASE/EACVI 2015)."
+      "significance": "A value below {rv_sprime_low} cm/s indicates RV systolic dysfunction (ASE/EACVI 2015)."
     },
     "rv_fac": {
       "name": "RV fractional area change",
       "abbr": "FAC",
       "def": "FAC = (end-diastolic area − end-systolic area) / end-diastolic area × 100%.",
       "method": "The endocardial border is traced in the RV-focused apical four-chamber view.",
-      "significance": "A value below 35% indicates RV systolic dysfunction (ASE/EACVI 2015)."
+      "significance": "A value below {rv_fac_low}% indicates RV systolic dysfunction (ASE/EACVI 2015)."
     },
     "ivc": {
       "name": "Inferior vena cava diameter",
@@ -361,14 +362,14 @@
       "abbr": "IVC collapse",
       "def": "Percent decrease of the diameter during a short sniff.",
       "method": "Measured in the subcostal view at the same site as the diameter.",
-      "significance": "Collapse above 50% suggests low right atrial pressure (ASE 2010, Rudski)."
+      "significance": "Collapse above {ivc_collapse_low}% suggests low right atrial pressure (ASE 2010, Rudski)."
     },
     "peri": {
       "name": "Pericardial effusion",
       "abbr": "Effusion",
       "def": "Size of the echo-free space between epicardium and pericardium in diastole.",
       "method": "The largest echo-free space is measured at end-diastole.",
-      "significance": "Semi-quantitative grading: < 10 mm small, 10–20 mm moderate, > 20 mm large (ESC 2015). Haemodynamic impact is assessed separately.",
+      "significance": "Semi-quantitative grading: < {peri_moderate} mm small, {peri_moderate}–{peri_large} mm moderate, > {peri_large} mm large (ESC 2015). Haemodynamic impact is assessed separately.",
       "normNote": "No single reference value; grades are in the rules (ESC 2015)."
     },
     "ao_root": {
@@ -384,7 +385,7 @@
       "abbr": "PA",
       "def": "Diameter of the main pulmonary artery.",
       "method": "Parasternal short-axis view at the level of the great vessels.",
-      "significance": "A value above 25 mm is one of the additional echo signs of pulmonary hypertension (ESC/ERS 2015)."
+      "significance": "A value above {pa_diam_high} mm is one of the additional echo signs of pulmonary hypertension (ESC/ERS 2015)."
     }
   },
   "units": {
@@ -498,7 +499,7 @@
     },
     "lvmass-rwt": {
       "title": "LV mass index (Devereux) and RWT",
-      "note": "Geometry: with increased LVMi, RWT > 0.42 is concentric and ≤ 0.42 eccentric hypertrophy; normal LVMi with RWT > 0.42 is concentric remodeling."
+      "note": "Geometry: with increased LVMi, RWT > {rwt_high} is concentric and ≤ {rwt_high} eccentric hypertrophy; normal LVMi with RWT > {rwt_high} is concentric remodeling."
     },
     "diastolic": {
       "title": "Mitral E/A and average E/e′",
@@ -550,36 +551,36 @@
     "concentricHypertrophy": "Concentric hypertrophy"
   },
   "rules": {
-    "lvef_reduced": "LVEF below the sex-specific reference (men < 52%, women < 54%).",
-    "lv_concentric_remodeling": "LV concentric remodeling: normal LVMi, RWT > 0.42.",
-    "lv_eccentric_hypertrophy": "LV eccentric hypertrophy: increased LVMi, RWT ≤ 0.42.",
-    "lv_concentric_hypertrophy": "LV concentric hypertrophy: increased LVMi, RWT > 0.42.",
-    "la_enlarged": "Left atrial enlargement: LAVi > 34 mL/m².",
-    "dd_preserved_ef_normal": "Preserved EF; 0–1 of 4 criteria positive: normal diastolic function (ASE/EACVI 2016).",
-    "dd_preserved_ef_indeterminate": "Preserved EF; 2 of 4 criteria positive: indeterminate diastolic function (ASE/EACVI 2016).",
-    "dd_preserved_ef_dysfunction": "Preserved EF; 3–4 of 4 criteria positive: LV diastolic dysfunction (ASE/EACVI 2016).",
-    "dd_reduced_ef_grade1": "Reduced EF; E/A ≤ 0.8 and E ≤ 50 cm/s: normal LA pressure, grade I diastolic dysfunction (ASE/EACVI 2016).",
-    "dd_reduced_ef_grade3": "Reduced EF; E/A ≥ 2: elevated LA pressure, grade III diastolic dysfunction (ASE/EACVI 2016).",
-    "dd_reduced_ef_grade1_by_criteria": "Reduced EF; intermediate E/A; 0–1 of 3 criteria positive (E/e′ > 14, TRV > 2.8 m/s, LAVi > 34): normal LA pressure, grade I (ASE/EACVI 2016).",
-    "dd_reduced_ef_grade2": "Reduced EF; intermediate E/A; 2–3 of 3 criteria positive: elevated LA pressure, grade II diastolic dysfunction (ASE/EACVI 2016).",
-    "ph_trv_low": "TRV ≤ 2.8 m/s: low echocardiographic probability of pulmonary hypertension, intermediate if other signs are present (ESC/ERS 2022).",
-    "ph_trv_intermediate": "TRV 2.9–3.4 m/s: intermediate probability of pulmonary hypertension, high if other signs are present (ESC/ERS 2022).",
-    "ph_trv_high": "TRV > 3.4 m/s: high echocardiographic probability of pulmonary hypertension (ESC/ERS 2022).",
-    "tapse_pasp_low": "TAPSE/PASP < 0.55 mm/mmHg: additional echo sign of pulmonary hypertension (ESC/ERS 2022).",
-    "rv_dilated": "RV dilation: basal diameter > 41 mm.",
-    "rv_dysfunction_tapse": "Sign of RV systolic dysfunction: TAPSE < 17 mm.",
-    "rv_dysfunction_sprime": "Sign of RV systolic dysfunction: S′ < 9.5 cm/s.",
-    "rv_dysfunction_fac": "Sign of RV systolic dysfunction: FAC < 35%.",
-    "rap_normal": "Estimated RA pressure: 3 mmHg (IVC ≤ 21 mm, collapse > 50%).",
-    "rap_intermediate": "Estimated RA pressure: 8 mmHg (intermediate pattern).",
-    "rap_high": "Estimated RA pressure: 15 mmHg (IVC > 21 mm, collapse < 50%).",
-    "peri_small": "Small pericardial effusion (< 10 mm).",
-    "peri_moderate": "Moderate pericardial effusion (10–20 mm).",
-    "peri_large": "Large pericardial effusion (> 20 mm).",
-    "as_mild": "AV Vmax 2.6–2.9 m/s: consistent with mild aortic stenosis; confirm with gradient and valve area.",
-    "as_moderate": "AV Vmax 3.0–3.9 m/s: consistent with moderate aortic stenosis; confirm with gradient and valve area.",
-    "as_severe": "AV Vmax ≥ 4.0 m/s: consistent with severe aortic stenosis; confirm with gradient and valve area.",
-    "pa_dilated": "Main pulmonary artery dilation (> 25 mm)."
+    "lvef_reduced": "LVEF below the sex-specific reference (men < {lvef_low_m}%, women < {lvef_low_f}%).",
+    "lv_concentric_remodeling": "LV concentric remodeling: normal LVMi (men ≤ {lvmi_high_m}, women ≤ {lvmi_high_f} g/m²), RWT > {rwt_high}.",
+    "lv_eccentric_hypertrophy": "LV eccentric hypertrophy: increased LVMi (men > {lvmi_high_m}, women > {lvmi_high_f} g/m²), RWT ≤ {rwt_high}.",
+    "lv_concentric_hypertrophy": "LV concentric hypertrophy: increased LVMi (men > {lvmi_high_m}, women > {lvmi_high_f} g/m²), RWT > {rwt_high}.",
+    "la_enlarged": "Left atrial enlargement: LAVi > {lavi_high} mL/m².",
+    "dd_preserved_ef_normal": "Preserved EF (≥ {dd_ef_cut}%); 0–1 of 4 criteria positive: normal diastolic function (ASE/EACVI 2016).",
+    "dd_preserved_ef_indeterminate": "Preserved EF (≥ {dd_ef_cut}%); 2 of 4 criteria positive: indeterminate diastolic function (ASE/EACVI 2016).",
+    "dd_preserved_ef_dysfunction": "Preserved EF (≥ {dd_ef_cut}%); 3–4 of 4 criteria positive: LV diastolic dysfunction (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade1": "Reduced EF (< {dd_ef_cut}%); E/A ≤ {dd_ea_low} and E ≤ {dd_e_cut} cm/s: normal LA pressure, grade I diastolic dysfunction (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade3": "Reduced EF (< {dd_ef_cut}%); E/A ≥ {dd_ea_high}: elevated LA pressure, grade III diastolic dysfunction (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade1_by_criteria": "Reduced EF (< {dd_ef_cut}%); intermediate E/A (E/A ≤ {dd_ea_low} with E > {dd_e_cut} cm/s, or E/A > {dd_ea_low} and < {dd_ea_high}); 0–1 of 3 criteria positive (E/e′ > {ee_avg_high}, TRV > {trv_high} m/s, LAVi > {lavi_high}): normal LA pressure, grade I (ASE/EACVI 2016).",
+    "dd_reduced_ef_grade2": "Reduced EF (< {dd_ef_cut}%); intermediate E/A (E/A ≤ {dd_ea_low} with E > {dd_e_cut} cm/s, or E/A > {dd_ea_low} and < {dd_ea_high}); 2–3 of 3 criteria positive (E/e′ > {ee_avg_high}, TRV > {trv_high} m/s, LAVi > {lavi_high}): elevated LA pressure, grade II diastolic dysfunction (ASE/EACVI 2016).",
+    "ph_trv_low": "TRV ≤ {trv_high} m/s: low echocardiographic probability of pulmonary hypertension, intermediate if other signs are present (ESC/ERS 2022).",
+    "ph_trv_intermediate": "TRV > {trv_high} and ≤ {trv_ph_high} m/s: intermediate probability of pulmonary hypertension, high if other signs are present (ESC/ERS 2022).",
+    "ph_trv_high": "TRV > {trv_ph_high} m/s: high echocardiographic probability of pulmonary hypertension (ESC/ERS 2022).",
+    "tapse_pasp_low": "TAPSE/PASP < {tapse_pasp_low} mm/mmHg: additional echo sign of pulmonary hypertension (ESC/ERS 2022).",
+    "rv_dilated": "RV dilation: basal diameter > {rv_basal_high} mm.",
+    "rv_dysfunction_tapse": "Sign of RV systolic dysfunction: TAPSE < {tapse_low} mm.",
+    "rv_dysfunction_sprime": "Sign of RV systolic dysfunction: S′ < {rv_sprime_low} cm/s.",
+    "rv_dysfunction_fac": "Sign of RV systolic dysfunction: FAC < {rv_fac_low}%.",
+    "rap_normal": "Estimated RA pressure: 3 mmHg (IVC ≤ {ivc_high} mm, collapse > {ivc_collapse_low}%).",
+    "rap_intermediate": "Estimated RA pressure: 8 mmHg (intermediate pattern: neither IVC ≤ {ivc_high} mm with collapse > {ivc_collapse_low}% nor IVC > {ivc_high} mm with collapse < {ivc_collapse_low}%).",
+    "rap_high": "Estimated RA pressure: 15 mmHg (IVC > {ivc_high} mm, collapse < {ivc_collapse_low}%).",
+    "peri_small": "Small pericardial effusion (< {peri_moderate} mm).",
+    "peri_moderate": "Moderate pericardial effusion ({peri_moderate}–{peri_large} mm).",
+    "peri_large": "Large pericardial effusion (> {peri_large} mm).",
+    "as_mild": "AV Vmax ≥ {as_mild} and < {as_moderate} m/s: consistent with mild aortic stenosis; confirm with gradient and valve area.",
+    "as_moderate": "AV Vmax ≥ {as_moderate} and < {as_severe} m/s: consistent with moderate aortic stenosis; confirm with gradient and valve area.",
+    "as_severe": "AV Vmax ≥ {as_severe} m/s: consistent with severe aortic stenosis; confirm with gradient and valve area.",
+    "pa_dilated": "Main pulmonary artery dilation (> {pa_diam_high} mm)."
   },
   "conclusion": {
     "title": "Echocardiography conclusion — DRAFT",
@@ -602,7 +603,8 @@
     "copied": "Copied.",
     "selectedForCopy": "Text selected — press Ctrl+C to copy.",
     "cannotApproveHeading": "You cannot approve this conclusion",
-    "requiredSpecialty": "Required specialty: {specialty}."
+    "requiredSpecialty": "Required specialty: {specialty}.",
+    "thresholdChanged": "A cut-off in this rule was changed by the admin and differs from the published value."
   },
   "rule": {
     "notReviewed": "Rule not yet reviewed by a doctor",
@@ -751,7 +753,7 @@
     "higher_nursing": "Higher nursing"
   },
   "admin": {
-    "note": "Admins manage users, license checks, settings and logs. An admin may approve, reject and change all medical decisions (rules and conclusions); these actions are logged and marked \"admin\".",
+    "note": "Admins manage users, license checks, medical decisions, cut-offs, plans and settings. Every change is possible only within the allowed limits, is logged and marked \"admin\", and can be reset.",
     "users": "Users and license verification",
     "license": "License / diploma",
     "approve": "Approve",
@@ -786,7 +788,8 @@
     "registration": "Registration",
     "answer": "Doctor answer",
     "payment": "Payment",
-    "admin": "Admin"
+    "admin": "Admin",
+    "settings": "Cut-offs and settings"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -825,6 +828,56 @@
       "mustConfirm": "Confirm that your information is correct."
     },
     "badSignature": "The payment notification signature could not be verified.",
-    "notImplemented": "This function is not connected yet (stub)."
+    "notImplemented": "This function is not connected yet (stub).",
+    "limitExceeded": "The value is outside the allowed limits."
+  },
+  "limits": {
+    "title": "Cut-offs and settings",
+    "intro": "An admin can change each value, but only within the allowed range: ±{pct}% of the published value and keeping the logical order (for example, a lower bound below the upper one). Formula coefficients are fixed. Every change is logged and shown on the site as \"changed by admin\".",
+    "changedCount": "{count} cut-offs currently differ from the published values.",
+    "ruleCutoffs": "Rule cut-offs",
+    "low": "lower bound",
+    "high": "upper bound",
+    "col": {
+      "name": "Value",
+      "published": "Published",
+      "current": "Current",
+      "allowed": "Allowed range"
+    },
+    "changed": "Changed",
+    "published": "As published",
+    "save": "Save",
+    "reset": "Reset",
+    "outOfBounds": "Outside the allowed range: {min} – {max}.",
+    "order": "Order would break: \"{lower}\" must be lower than \"{upper}\".",
+    "notNumber": "Enter a number.",
+    "badValue": "Invalid value.",
+    "locked": "This setting cannot be changed.",
+    "plansTitle": "Plan limits",
+    "plan": {
+      "dailyRequests": "Requests per day",
+      "maxTokens": "max_tokens",
+      "price": "Price",
+      "status": "Status"
+    },
+    "configTitle": "Settings",
+    "config": {
+      "aiEnabled": "AI assistant enabled",
+      "testMode": "Test mode (everyone on the free plan)",
+      "paymentsLocked": "locked: payment providers are not connected yet (stub)."
+    }
+  },
+  "thresholds": {
+    "as_mild": "Aortic stenosis: start of mild grade (Vmax)",
+    "as_moderate": "Aortic stenosis: start of moderate grade (Vmax)",
+    "as_severe": "Aortic stenosis: start of severe grade (Vmax)",
+    "trv_ph_high": "Pulmonary hypertension: high-probability cut-off (TRV)",
+    "tapse_pasp_low": "TAPSE/PASP lower cut-off",
+    "peri_moderate": "Pericardial effusion: start of moderate grade",
+    "peri_large": "Pericardial effusion: large-grade cut-off",
+    "dd_ef_cut": "Diastolic algorithm: preserved EF cut-off",
+    "dd_ea_low": "Diastolic algorithm: lower E/A cut-off",
+    "dd_ea_high": "Diastolic algorithm: upper E/A cut-off",
+    "dd_e_cut": "Diastolic algorithm: E velocity cut-off"
   }
 }
